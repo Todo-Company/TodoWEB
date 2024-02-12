@@ -4,13 +4,6 @@ import * as React from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
-
-import { Calendar as CalendarIcon, UserRound, Command as CommandIcon, Menu } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { ModeToggle } from "@/components/ModeToggle";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import {
     Command,
     CommandDialog,
@@ -22,8 +15,14 @@ import {
     CommandSeparator,
     CommandShortcut,
 } from "@/components/ui/command";
-import { useUser } from "@auth0/nextjs-auth0/client";
-import {User} from "@/components/header/User";
+
+import { Calendar as CalendarIcon, Command as CommandIcon, Menu } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { ModeToggle } from "@/components/ModeToggle";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { User } from "@/components/header/User";
 
 export default function Header() {
     const [date, setDate] = React.useState<Date>();
@@ -148,7 +147,7 @@ export default function Header() {
 
                     <ModeToggle />
 
-                    <User/>
+                    <User />
                 </div>
             </div>
         </header>
