@@ -5,14 +5,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, UserRound, Command as CommandIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ModeToggle } from "@/components/ModeToggle";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import {
     Command,
-    CommandDialog,
     CommandEmpty,
     CommandGroup,
     CommandInput,
@@ -50,7 +50,7 @@ export default function Header() {
                     >
                         <path
                             d="M65.625 25C65.6238 23.904 65.3347 22.8275 64.7859 21.8786C64.2375 20.9298 63.4491 20.1418 62.5 19.5938L40.625 7.09375C39.675 6.54519 38.5972 6.25641 37.5 6.25641C36.4028 6.25641 35.325 6.54519 34.375 7.09375L12.5 19.5938C11.5508 20.1418 10.7624 20.9298 10.2139 21.8786C9.66544 22.8275 9.37613 23.904 9.375 25V50C9.37613 51.0959 9.66544 52.1725 10.2139 53.1213C10.7624 54.0703 11.5508 54.8581 12.5 55.4062L34.375 67.9062C35.325 68.4547 36.4028 68.7437 37.5 68.7437C38.5972 68.7437 39.675 68.4547 40.625 67.9062L62.5 55.4062C63.4491 54.8581 64.2375 54.0703 64.7859 53.1213C65.3347 52.1725 65.6238 51.0959 65.625 50V25Z"
-                            className="stroke-foreground stroke-[6px]"
+                            className="fill-background stroke-foreground stroke-[6px]"
                             strokeLinecap="round"
                             strokeLinejoin="round"
                         />
@@ -76,24 +76,46 @@ export default function Header() {
                 </span>
 
                 <div className="ml-auto flex gap-4">
-                    <nav className="flex gap-2">
-                        <CommandDialog open={open} onOpenChange={setOpen}>
-                            <CommandInput placeholder="Type a command or search..." />
-                            <CommandList className="antialiased">
-                                <CommandEmpty>No results found.</CommandEmpty>
-                                <CommandGroup heading="Suggestions">
-                                    <CommandItem>Calendar</CommandItem>
-                                    <CommandItem>Search Emoji</CommandItem>
-                                    <CommandItem>Calculator</CommandItem>
-                                </CommandGroup>
-                                <CommandSeparator />
-                                <CommandGroup heading="Settings">
-                                    <CommandItem>Profile</CommandItem>
-                                    <CommandItem>Billing</CommandItem>
-                                    <CommandItem>Settings</CommandItem>
-                                </CommandGroup>
-                            </CommandList>
-                        </CommandDialog>
+                    <nav className="flex gap-4" aria-label="Date and Search navigation">
+                        <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    onClick={() => setOpen(!open)}
+                                    variant={"outline"}
+                                    className="w-[280px] justify-between gap-8 text-muted-foreground"
+                                >
+                                    <span className="flex items-center">
+                                        <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 stroke-muted-foreground opacity-50" />
+                                        Search for TODOs
+                                    </span>
+                                    <code className="relative flex items-center rounded bg-muted px-[0.3rem] py-[0.1rem] font-mono text-sm font-semibold">
+                                        {/Mac OS X/.test(navigator.userAgent) ?
+                                            <CommandIcon className="w-4" />
+                                        :   "ctrl"}
+                                        +k
+                                    </code>
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="p-0">
+                                <Command>
+                                    <CommandInput placeholder="Type a command or search..." />
+                                    <CommandList className="antialiased">
+                                        <CommandEmpty>No results found.</CommandEmpty>
+                                        <CommandGroup heading="Todos">
+                                            <CommandItem>All</CommandItem>
+                                            <CommandItem>String</CommandItem>
+                                            <CommandItem>Progressed</CommandItem>
+                                        </CommandGroup>
+                                        <CommandSeparator />
+                                        <CommandGroup heading="">
+                                            <CommandItem>Profile</CommandItem>
+                                            <CommandItem>Billing</CommandItem>
+                                            <CommandItem>Settings</CommandItem>
+                                        </CommandGroup>
+                                    </CommandList>
+                                </Command>
+                            </PopoverContent>
+                        </Popover>
 
                         <Popover>
                             <PopoverTrigger asChild>
@@ -113,20 +135,12 @@ export default function Header() {
                             </PopoverContent>
                         </Popover>
                     </nav>
+
                     <ModeToggle />
 
-                    <Button variant="outline" size="icon" asChild>
-                        <a href="">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="lucide lucide-user-round w-6 fill-none stroke-current stroke-2"
-                            >
-                                <circle cx="12" cy="8" r="5" />
-                                <path d="M20 21a8 8 0 0 0-16 0" />
-                            </svg>
+                    <Button variant={"outline"} size="icon" asChild>
+                        <a href="/login" aria-label="User Login">
+                            <UserRound />
                         </a>
                     </Button>
                 </div>
