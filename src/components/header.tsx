@@ -1,17 +1,42 @@
 "use client";
 
 import * as React from "react";
-import { ModeToggle } from "@/components/ModeToggle";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
+
 import { Calendar as CalendarIcon } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { Command } from "cmdk";
+import { ModeToggle } from "@/components/ModeToggle";
+import {
+    Command,
+    CommandDialog,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+    CommandSeparator,
+    CommandShortcut,
+} from "@/components/ui/command";
 
 export default function Header() {
     const [date, setDate] = React.useState<Date>();
+    const [open, setOpen] = React.useState(false);
+
+    React.useEffect(() => {
+        const down = (e: KeyboardEvent) => {
+            if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                setOpen((open) => !open);
+            }
+        };
+
+        document.addEventListener("keydown", down);
+        return () => document.removeEventListener("keydown", down);
+    }, []);
 
     return (
         <header className="grid grid-cols-[inherit] border-b border-border py-4 [grid-column:_page]">
@@ -52,6 +77,24 @@ export default function Header() {
 
                 <div className="ml-auto flex gap-4">
                     <nav className="flex gap-2">
+                        <CommandDialog open={open} onOpenChange={setOpen}>
+                            <CommandInput placeholder="Type a command or search..." />
+                            <CommandList className="antialiased">
+                                <CommandEmpty>No results found.</CommandEmpty>
+                                <CommandGroup heading="Suggestions">
+                                    <CommandItem>Calendar</CommandItem>
+                                    <CommandItem>Search Emoji</CommandItem>
+                                    <CommandItem>Calculator</CommandItem>
+                                </CommandGroup>
+                                <CommandSeparator />
+                                <CommandGroup heading="Settings">
+                                    <CommandItem>Profile</CommandItem>
+                                    <CommandItem>Billing</CommandItem>
+                                    <CommandItem>Settings</CommandItem>
+                                </CommandGroup>
+                            </CommandList>
+                        </CommandDialog>
+
                         <Popover>
                             <PopoverTrigger asChild>
                                 <Button
