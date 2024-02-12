@@ -5,7 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 
-import { Calendar as CalendarIcon, UserRound, Command as CommandIcon } from "lucide-react";
+import { Calendar as CalendarIcon, UserRound, Command as CommandIcon, Menu } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -13,6 +13,7 @@ import { ModeToggle } from "@/components/ModeToggle";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import {
     Command,
+    CommandDialog,
     CommandEmpty,
     CommandGroup,
     CommandInput,
@@ -76,24 +77,25 @@ export default function Header() {
                 </span>
 
                 <div className="ml-auto flex gap-4">
-                    <nav className="flex gap-4 max-lg:hidden" aria-label="Date and Search navigation">
+                    <nav className="flex gap-4" aria-label="Date and Search navigation">
                         <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
-                                <Button
-                                    onClick={() => setOpen(!open)}
-                                    variant={"outline"}
-                                    className="w-[280px] justify-between gap-8 text-muted-foreground"
-                                >
-                                    <span className="flex items-center">
-                                        <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 stroke-muted-foreground opacity-50" />
-                                        Search for TODOs
-                                    </span>
-                                    <code className="items-cente r relative  flex rounded bg-muted px-[0.3rem] py-[0.1rem] font-mono text-sm font-semibold">
-                                        {/Mac OS X/.test(navigator.userAgent) ?
-                                            <CommandIcon className="w-4" />
-                                        :   "ctrl"}
-                                        +k
-                                    </code>
+                                <Button onClick={() => setOpen(!open)} variant={"outline"} className="max-lg:p-2">
+                                    <div className="flex w-[280px] justify-between gap-8 text-muted-foreground max-lg:hidden">
+                                        <span className="flex items-center">
+                                            <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 stroke-muted-foreground opacity-50" />
+                                            Search for TODOs
+                                        </span>
+                                        <code className="items-cente r relative  flex rounded bg-muted px-[0.3rem] py-[0.1rem] font-mono text-sm font-semibold">
+                                            {/Mac OS X/.test(navigator.userAgent) ?
+                                                <CommandIcon className="w-4" />
+                                            :   "ctrl"}
+                                            +k
+                                        </code>
+                                    </div>
+                                    <div className="lg:hidden">
+                                        <Menu className="h-4 w-4" />
+                                    </div>
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="p-0">
@@ -119,17 +121,23 @@ export default function Header() {
 
                         <Popover>
                             <PopoverTrigger asChild>
-                                <Button
-                                    variant={"outline"}
-                                    className={cn(
-                                        "w-[280px] justify-start text-left font-normal",
-                                        !date && "text-muted-foreground",
-                                    )}
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                </Button>
+                                <div>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-[280px] justify-start text-left font-normal max-lg:hidden",
+                                            !date && "text-muted-foreground",
+                                        )}
+                                    >
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                    </Button>
+                                    <Button variant={"outline"} size={"icon"} className="lg:hidden">
+                                        <CalendarIcon className="h-4 w-4" />
+                                    </Button>
+                                </div>
                             </PopoverTrigger>
+
                             <PopoverContent className="w-auto p-0">
                                 <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
                             </PopoverContent>
