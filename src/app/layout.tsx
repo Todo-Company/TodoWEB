@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { UserProvider } from '@auth0/nextjs-auth0/client';
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
@@ -19,7 +20,9 @@ export default function RootLayout({
                     rel="stylesheet"
                 ></link>
             </head>
-            <body className="font-serif">{children}</body>
+            <UserProvider>
+                <body className="font-serif">{children}</body>
+            </UserProvider>
         </html>
     );
 }
