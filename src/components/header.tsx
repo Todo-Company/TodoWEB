@@ -76,7 +76,7 @@ export default function Header() {
                 </span>
 
                 <div className="ml-auto flex gap-4">
-                    <nav className="flex gap-4">
+                    <nav className="flex gap-4" aria-label="Date and Search navigation">
                         <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                                 <Button
@@ -101,13 +101,13 @@ export default function Header() {
                                     <CommandInput placeholder="Type a command or search..." />
                                     <CommandList className="antialiased">
                                         <CommandEmpty>No results found.</CommandEmpty>
-                                        <CommandGroup heading="Suggestions">
-                                            <CommandItem>Calendar</CommandItem>
-                                            <CommandItem>Search Emoji</CommandItem>
-                                            <CommandItem>Calculator</CommandItem>
+                                        <CommandGroup heading="Todos">
+                                            <CommandItem>All</CommandItem>
+                                            <CommandItem>String</CommandItem>
+                                            <CommandItem>Progressed</CommandItem>
                                         </CommandGroup>
                                         <CommandSeparator />
-                                        <CommandGroup heading="Settings">
+                                        <CommandGroup heading="">
                                             <CommandItem>Profile</CommandItem>
                                             <CommandItem>Billing</CommandItem>
                                             <CommandItem>Settings</CommandItem>
@@ -135,10 +135,11 @@ export default function Header() {
                             </PopoverContent>
                         </Popover>
                     </nav>
+
                     <ModeToggle />
 
                     <Button variant="outline" size="icon" asChild>
-                        <a href="">
+                        <a href="/login" aria-label="User Login">
                             <UserRound />
                         </a>
                     </Button>
