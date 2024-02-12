@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { UserProvider } from '@auth0/nextjs-auth0/client';
 import "../styles/globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -20,9 +20,11 @@ export default function RootLayout({
                     rel="stylesheet"
                 ></link>
             </head>
-            <UserProvider>
-                <body className="font-serif">{children}</body>
-            </UserProvider>
+            <body className="grid grid-cols-[[page-start_breakout-left-start]_minmax(var(--inline-padding),_1fr)_[content-start_breakout-right-start]_min(100%_-_var(--inline-padding)_*_2,_1400px)_[content-end_breakout-left-end]_minmax(var(--inline-padding),_1fr)_[page-end_breakout-right-end]] bg-background font-serif [--inline-padding:_1rem]">
+                <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                    {children}
+                </ThemeProvider>
+            </body>
         </html>
     );
 }
