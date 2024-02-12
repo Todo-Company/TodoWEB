@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { UserProvider } from "@auth0/nextjs-auth0/client";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -19,12 +20,15 @@ export default function RootLayout({
                     href="https://api.fontshare.com/v2/css?f[]=satoshi@1,900,700,500,301,701,300,501,401,901,400,2&display=swap"
                     rel="stylesheet"
                 ></link>
+                <title>TODO</title>
             </head>
-            <body className="grid grid-cols-[[page-start_breakout-left-start]_minmax(var(--inline-padding),_1fr)_[content-start_breakout-right-start]_min(100%_-_var(--inline-padding)_*_2,_1400px)_[content-end_breakout-left-end]_minmax(var(--inline-padding),_1fr)_[page-end_breakout-right-end]] bg-background font-serif [--inline-padding:_1rem]">
-                <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                    {children}
-                </ThemeProvider>
-            </body>
+            <UserProvider>
+                <body className="grid grid-cols-[[page-start_breakout-left-start]_minmax(var(--inline-padding),_1fr)_[content-start_breakout-right-start]_min(100%_-_var(--inline-padding)_*_2,_1400px)_[content-end_breakout-left-end]_minmax(var(--inline-padding),_1fr)_[page-end_breakout-right-end]] bg-background font-serif [--inline-padding:_1rem]">
+                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                        {children}
+                    </ThemeProvider>
+                </body>
+            </UserProvider>
         </html>
     );
 }
