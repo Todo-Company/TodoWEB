@@ -21,6 +21,8 @@ import {
     CommandSeparator,
     CommandShortcut,
 } from "@/components/ui/command";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import {User} from "@/components/header/User";
 
 export default function Header() {
     const [date, setDate] = React.useState<Date>();
@@ -138,11 +140,7 @@ export default function Header() {
 
                     <ModeToggle />
 
-                    <Button variant={"outline"} size="icon" asChild>
-                        <a href="/login" aria-label="User Login">
-                            <UserRound />
-                        </a>
-                    </Button>
+                    <User/>
                 </div>
             </div>
         </header>
