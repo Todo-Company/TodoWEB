@@ -16,13 +16,15 @@ import {
     CommandShortcut,
 } from "@/components/ui/command";
 
-import { Calendar as CalendarIcon, Command as CommandIcon, Menu } from "lucide-react";
+import { Calendar as CalendarIcon, Menu } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ModeToggle } from "@/components/ModeToggle";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { User } from "@/components/header/User";
+
+import CtrlPlus from "@/components/ui/shortcut";
 
 export default function Header() {
     const [date, setDate] = React.useState<Date>();
@@ -42,7 +44,7 @@ export default function Header() {
 
     return (
         <header className="grid grid-cols-[inherit] border-b border-border py-4 [grid-column:_page]">
-            <div className="flex [grid-column:_content]">
+            <div className="flex items-center [grid-column:_content]">
                 <span className="flex items-center gap-4">
                     <svg
                         width="40"
@@ -74,25 +76,22 @@ export default function Header() {
                         />
                     </svg>
 
-                    <h1 className="scroll-m-20 font-serif text-2xl font-black uppercase tracking-wide">TODO</h1>
+                    <h1 className="scroll-m-20 font-serif text-2xl font-black uppercase tracking-wide max-sm:hidden">
+                        TODO
+                    </h1>
                 </span>
 
                 <div className="ml-auto flex gap-4">
                     <nav className="flex gap-4" aria-label="Date and Search navigation">
                         <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
-                                <Button onClick={() => setOpen(!open)} variant={"outline"} className="max-lg:p-2">
+                                <Button onClick={() => setOpen(!open)} variant={"outline"} className="group max-lg:p-2">
                                     <div className="flex w-[280px] justify-between gap-8 text-muted-foreground max-lg:hidden">
-                                        <span className="flex items-center">
-                                            <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 stroke-muted-foreground opacity-50" />
+                                        <span className="flex items-center font-normal transition-colors group-hover:!text-foreground">
+                                            <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 stroke-muted-foreground stroke-1 opacity-50 transition-all group-hover:!stroke-foreground group-hover:opacity-100" />
                                             Search for TODOs
                                         </span>
-                                        <code className="items-cente r relative  flex rounded bg-muted px-[0.3rem] py-[0.1rem] font-mono text-sm font-semibold">
-                                            {/Mac OS X/.test(navigator.userAgent) ?
-                                                <CommandIcon className="w-4" />
-                                            :   "ctrl"}
-                                            +k
-                                        </code>
+                                        <CtrlPlus letter="k" />
                                     </div>
                                     <div className="lg:hidden">
                                         <Menu className="h-4 w-4" />
@@ -105,9 +104,25 @@ export default function Header() {
                                     <CommandList className="antialiased">
                                         <CommandEmpty>No results found.</CommandEmpty>
                                         <CommandGroup heading="Todos">
-                                            <CommandItem>All</CommandItem>
-                                            <CommandItem>String</CommandItem>
-                                            <CommandItem>Progressed</CommandItem>
+                                            <CommandItem>
+                                                All
+                                                <CommandShortcut>
+                                                    <CtrlPlus letter="a" />
+                                                </CommandShortcut>
+                                            </CommandItem>
+
+                                            <CommandItem>
+                                                String
+                                                <CommandShortcut>
+                                                    <CtrlPlus letter="s" />
+                                                </CommandShortcut>
+                                            </CommandItem>
+                                            <CommandItem>
+                                                Progressed
+                                                <CommandShortcut>
+                                                    <CtrlPlus letter="p" />
+                                                </CommandShortcut>
+                                            </CommandItem>
                                         </CommandGroup>
                                         <CommandSeparator />
                                         <CommandGroup heading="">
