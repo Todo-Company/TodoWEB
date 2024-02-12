@@ -81,7 +81,7 @@ export default function Header() {
                             <PopoverTrigger asChild>
                                 <Button
                                     onClick={() => setOpen(!open)}
-                                    variant="outline"
+                                    variant={"outline"}
                                     className="w-[280px] justify-between gap-8 text-muted-foreground"
                                 >
                                     <span className="flex items-center">
@@ -138,7 +138,7 @@ export default function Header() {
 
                     <ModeToggle />
 
-                    <Button variant="outline" size="icon" asChild>
+                    <Button variant={"outline"} size="icon" asChild>
                         <a href="/login" aria-label="User Login">
                             <UserRound />
                         </a>
