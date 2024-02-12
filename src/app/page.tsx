@@ -48,7 +48,8 @@ export default function Home() {
                 >
                     <h2 className={`mb-3 text-2xl font-semibold`}>
                         Docs{" "}
-                        <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                        <span
+                            className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                             -&gt;
                         </span>
                     </h2>
@@ -65,7 +66,8 @@ export default function Home() {
                 >
                     <h2 className={`mb-3 text-2xl font-semibold`}>
                         Learn{" "}
-                        <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                        <span
+                            className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                             -&gt;
                         </span>
                     </h2>
@@ -82,7 +84,8 @@ export default function Home() {
                 >
                     <h2 className={`mb-3 text-2xl font-semibold`}>
                         Templates{" "}
-                        <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                        <span
+                            className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                             -&gt;
                         </span>
                     </h2>
@@ -97,7 +100,8 @@ export default function Home() {
                 >
                     <h2 className={`mb-3 text-2xl font-semibold`}>
                         Deploy{" "}
-                        <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                        <span
+                            className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                             -&gt;
                         </span>
                     </h2>
@@ -106,6 +110,7 @@ export default function Home() {
                     </p>
                 </a>
                 <a href="/api/auth/login">Login</a>
+                <a href="/api/auth/logout">Logout</a>
             </div>
         </main>
     );
