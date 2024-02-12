@@ -76,7 +76,7 @@ export default function Header() {
                 </span>
 
                 <div className="ml-auto flex gap-4">
-                    <nav className="flex gap-4" aria-label="Date and Search navigation">
+                    <nav className="flex gap-4 max-lg:hidden" aria-label="Date and Search navigation">
                         <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                                 <Button
@@ -88,7 +88,7 @@ export default function Header() {
                                         <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 stroke-muted-foreground opacity-50" />
                                         Search for TODOs
                                     </span>
-                                    <code className="relative flex items-center rounded bg-muted px-[0.3rem] py-[0.1rem] font-mono text-sm font-semibold">
+                                    <code className="items-cente r relative  flex rounded bg-muted px-[0.3rem] py-[0.1rem] font-mono text-sm font-semibold">
                                         {/Mac OS X/.test(navigator.userAgent) ?
                                             <CommandIcon className="w-4" />
                                         :   "ctrl"}
