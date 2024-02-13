@@ -1,4 +1,4 @@
-import {useUser} from "@auth0/nextjs-auth0/client";
+// import {useUser} from "@auth0/nextjs-auth0/client";
 import {UserRound} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import * as React from "react";
@@ -7,46 +7,35 @@ import Link from "next/link";
 import {
     Avatar,
     AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {useSession} from "next-auth/react";
 
 export function User() {
+    const {data: session, status} = useSession();
 
-    const { user, error, isLoading } = useUser();
+    if (session) {
+        const user = session.user;
+        if (user !== null) {
+            let initals = user.username?.charAt(0).toUpperCase()
 
-    if (isLoading) return (
-        <Button variant={"outline"} size="icon" asChild>
-            <div>
-                <l-line-spinner
-                    size="20"
-                    stroke="2"
-                    speed="1"
-                    color="white"
-                ></l-line-spinner>
-            </div>
-        </Button>
-    );
-    if (error) return <div>{error.message}</div>;
+            return (
+                user && (
+                    <Link href="/user">
+                        <Avatar>
+                            <AvatarImage src={user.image} alt={user.username}></AvatarImage>
+                            <AvatarFallback>{initals}</AvatarFallback>
+                        </Avatar>
+                    </Link>
+                )
+            );
+        }
 
-
-    if (user !== undefined) {
-        let initals = user.name?.charAt(0).toUpperCase()
-
-        return (
-            user && (
-                <Link href="/user">
-                    <Avatar>
-                        <AvatarImage src={user.picture} alt={user.name}></AvatarImage>
-                        <AvatarFallback>{initals}</AvatarFallback>
-                    </Avatar>
-                </Link>
-            )
-        );
     }
 
     return (
         <Button variant={"outline"} size="icon" asChild>
-            <a href="/api/auth/login" aria-label="User Login">
+            <Link href="/login" aria-label="User Login">
                 <UserRound />
-            </a>
+            </Link>
         </Button>
     )
 }
