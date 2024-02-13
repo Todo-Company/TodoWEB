@@ -75,7 +75,7 @@ export default function LoginPage(props) {
                         </Button>
 
                         <Button variant={"default"} type="submit" className="mt-4">
-                            Sign in
+                            Log in
                         </Button>
                     </form>
                 </Form>

@@ -39,7 +39,7 @@ export default function RegisterPage(props) {
         <>
             <CardHeader>
                 <CardTitle className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-                    Sign up
+                    Register your account
                 </CardTitle>
             </CardHeader>
             <CardContent>
@@ -86,7 +86,7 @@ export default function RegisterPage(props) {
                         />
 
                         <Button variant={"default"} type="submit" className="mt-8">
-                            Sign in
+                            Register
                         </Button>
                     </form>
                 </Form>
