@@ -9,13 +9,13 @@ import { Button } from "@/components/ui/button";
 
 export default function LoginRegister() {
     return (
-        <Tabs defaultValue="login" className="mx-auto mt-8 w-[400px] [grid-column:content] ">
+        <Tabs defaultValue="login" className="mx-auto mt-8 w-full max-w-[400px] [grid-column:content] ">
             <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Login</TabsTrigger>
                 <TabsTrigger value="register">Register</TabsTrigger>
             </TabsList>
 
-            <Card className="mx-auto mt-4 max-w-[40ch]">
+            <Card className="mx-auto mt-4">
                 <TabsContent value="login">
                     <LoginPage />
                 </TabsContent>
