@@ -15,6 +15,8 @@ import {
     CarouselPrevious,
     type CarouselApi,
 } from "@/components/ui/carousel";
+import { CommandShortcut } from "@/components/ui/command";
+import CtrlPlus from "@/components/ui/shortcut";
 
 type tutorialSlide = {
     name: string;
@@ -56,7 +58,12 @@ export default function Tutorial() {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger className="w-full text-left">Tutorial</DialogTrigger>
+            <DialogTrigger className="flex w-full justify-between text-left">
+                Tutorial
+                <CommandShortcut>
+                    <CtrlPlus letter="?" />
+                </CommandShortcut>
+            </DialogTrigger>
             <DialogContent className="w-screen max-w-[120ch] overflow-x-clip rounded-lg px-0 pb-12 pt-8 max-sm:max-w-[320px] sm:mx-[--inline-gap] sm:w-[calc(100vw_-_(var(--inline-gap)_*_2))] sm:-translate-x-[calc(50%_+_var(--inline-gap))] sm:[--inline-gap:_2rem]">
                 <Carousel setApi={setApi} className="flex flex-col">
                     <div className="mb-8 flex items-center px-8 *:relative *:left-0 *:right-0 *:top-0 *:translate-x-0 *:translate-y-0">

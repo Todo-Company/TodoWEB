@@ -7,13 +7,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import {signIn} from "next-auth/react";
-import {useRouter} from "next/navigation";
-import {toast} from "sonner";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function LoginPage() {
-    const router = useRouter()
-
+    const router = useRouter();
 
     const formSchema = z.object({
         email: z.string().min(1, { message: "Email has to be filled." }).email(),
@@ -58,7 +57,12 @@ export default function LoginPage() {
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
                                     <FormControl className="!mt-0">
-                                        <Input placeholder="email@email.com" autoComplete="current-email" type="email" {...field} />
+                                        <Input
+                                            placeholder="email@email.com"
+                                            autoComplete="current-email"
+                                            type="email"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -71,7 +75,12 @@ export default function LoginPage() {
                                 <FormItem className="mt-4">
                                     <FormLabel>Password</FormLabel>
                                     <FormControl className="!mt-0">
-                                        <Input placeholder="Password" autoComplete="current-password" type="password" {...field} />
+                                        <Input
+                                            placeholder="Password"
+                                            autoComplete="current-password"
+                                            type="password"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

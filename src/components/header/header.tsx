@@ -128,13 +128,12 @@ export default function Header() {
                                             </CommandItem>
                                         </CommandGroup>
                                         <CommandSeparator />
-                                        <CommandGroup heading="Sections">
-                                            <CommandItem>Profile</CommandItem>
+                                        <CommandGroup heading="Application">
+                                            <Link href="/login">
+                                                <CommandItem className="cursor-pointer">Login</CommandItem>
+                                            </Link>
                                             <CommandItem>
                                                 <Tutorial />
-                                                <CommandShortcut>
-                                                    <CtrlPlus letter="?" />
-                                                </CommandShortcut>
                                             </CommandItem>
                                             <CommandItem>Settings</CommandItem>
                                         </CommandGroup>
