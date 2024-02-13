@@ -25,7 +25,9 @@ import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { User } from "@/components/header/User";
 
 import CtrlPlus from "@/components/ui/shortcut";
-import Tutorial from "./tutorial";
+import Tutorial from "../tutorial";
+
+import Link from "next/link";
 
 export default function Header() {
     const [date, setDate] = React.useState<Date>();
@@ -46,7 +48,7 @@ export default function Header() {
     return (
         <header className="grid grid-cols-[inherit] border-b border-border py-4 [grid-column:_page]">
             <div className="flex items-center [grid-column:_content]">
-                <span className="flex items-center gap-4">
+                <Link href={"/"} className="flex items-center gap-4">
                     <svg
                         width="40"
                         viewBox="0 0 75 75"
@@ -80,7 +82,7 @@ export default function Header() {
                     <h1 className="scroll-m-20 font-serif text-2xl font-black uppercase tracking-wide max-sm:hidden">
                         TODO
                     </h1>
-                </span>
+                </Link>
 
                 <div className="ml-auto flex gap-4">
                     <nav className="flex gap-4" aria-label="Date and Search navigation">
