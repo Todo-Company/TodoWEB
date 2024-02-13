@@ -15,17 +15,17 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-        <head>
-            <link
-                href="https://api.fontshare.com/v2/css?f[]=satoshi@1,900,700,500,301,701,300,501,401,901,400,2&display=swap"
-                rel="stylesheet"
-            ></link>
-            <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/lineSpinner.js" defer></script>
-            <title>TODO</title>
-        </head>
-        <UserProvider>
-            <body
-                className="grid grid-cols-[[page-start_breakout-left-start]_minmax(var(--inline-padding),_1fr)_[content-start_breakout-right-start]_min(100%_-_var(--inline-padding)_*_2,_1400px)_[content-end_breakout-left-end]_minmax(var(--inline-padding),_1fr)_[page-end_breakout-right-end]] bg-background font-serif [--inline-padding:_1rem]">
+            <head>
+                <link
+                    href="https://api.fontshare.com/v2/css?f[]=satoshi@1,900,700,500,301,701,300,501,401,901,400,2&display=swap"
+                    rel="stylesheet"
+                ></link>
+                <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/lineSpinner.js" defer></script>
+                <title>TODO</title>
+                <link rel="icon" href="/icon.png" type="image/png" />
+            </head>
+            <UserProvider>
+                <body className="grid grid-cols-[[page-start_breakout-left-start]_minmax(var(--inline-padding),_1fr)_[content-start_breakout-right-start]_min(100%_-_var(--inline-padding)_*_2,_1400px)_[content-end_breakout-left-end]_minmax(var(--inline-padding),_1fr)_[page-end_breakout-right-end]] bg-background font-serif [--inline-padding:_1rem]">
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                         {children}
                     </ThemeProvider>
