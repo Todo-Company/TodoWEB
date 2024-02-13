@@ -25,6 +25,7 @@ import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { User } from "@/components/header/User";
 
 import CtrlPlus from "@/components/ui/shortcut";
+import Tutorial from "./tutorial";
 
 export default function Header() {
     const [date, setDate] = React.useState<Date>();
@@ -125,9 +126,14 @@ export default function Header() {
                                             </CommandItem>
                                         </CommandGroup>
                                         <CommandSeparator />
-                                        <CommandGroup heading="">
+                                        <CommandGroup heading="Sections">
                                             <CommandItem>Profile</CommandItem>
-                                            <CommandItem>Billing</CommandItem>
+                                            <CommandItem>
+                                                <Tutorial />
+                                                <CommandShortcut>
+                                                    <CtrlPlus letter="?" />
+                                                </CommandShortcut>
+                                            </CommandItem>
                                             <CommandItem>Settings</CommandItem>
                                         </CommandGroup>
                                     </CommandList>
@@ -163,6 +169,10 @@ export default function Header() {
                     <ModeToggle />
 
                     <User />
+
+                    <div className="hidden">
+                        <Tutorial />
+                    </div>
                 </div>
             </div>
         </header>
