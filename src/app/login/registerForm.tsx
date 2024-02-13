@@ -7,8 +7,8 @@ import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {useRouter} from "next/navigation";
-import {toast} from "sonner";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -29,19 +29,19 @@ export default function RegisterPage() {
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        const response = await fetch('/api/register', {
-            method: 'POST',
+        const response = await fetch("/api/register", {
+            method: "POST",
             headers: {
-                'Content-Type': "application/json"
+                "Content-Type": "application/json",
             },
-            body: JSON.stringify(values)
-        })
+            body: JSON.stringify(values),
+        });
 
-        if(response.status !== 200) {
-            toast("User already exists or something went wrong.")
+        if (response.status !== 200) {
+            toast("User already exists or something went wrong.");
         }
 
-        router.push('/login')
+        router.push("/login");
     }
 
     return (
@@ -61,7 +61,12 @@ export default function RegisterPage() {
                                 <FormItem>
                                     <FormLabel>Username</FormLabel>
                                     <FormControl className="!mt-0">
-                                        <Input placeholder="username" autoComplete="new-username" type="text" {...field} />
+                                        <Input
+                                            placeholder="username"
+                                            autoComplete="new-username"
+                                            type="text"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -74,7 +79,12 @@ export default function RegisterPage() {
                                 <FormItem className="mt-4">
                                     <FormLabel>Email</FormLabel>
                                     <FormControl className="!mt-0">
-                                        <Input placeholder="email@email.com" autoComplete="new-email" type="email" {...field} />
+                                        <Input
+                                            placeholder="email@email.com"
+                                            autoComplete="new-email"
+                                            type="email"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage className="transition-all" />
                                 </FormItem>
@@ -87,7 +97,12 @@ export default function RegisterPage() {
                                 <FormItem className="mt-4">
                                     <FormLabel>Password</FormLabel>
                                     <FormControl className="!mt-0">
-                                        <Input placeholder="Password" autoComplete="new-password" type="password" {...field} />
+                                        <Input
+                                            placeholder="Password"
+                                            autoComplete="new-password"
+                                            type="password"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
