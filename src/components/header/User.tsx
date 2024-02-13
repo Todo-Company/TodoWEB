@@ -11,7 +11,7 @@ import Link from "next/link";
 export function User() {
     const { data, status } = useSession();
     const { theme } = useTheme();
-    ring.register();
+    // ring.register();
 
     if (status === "loading")
         return (

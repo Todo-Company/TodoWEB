@@ -4,13 +4,12 @@ import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-export async function POST(request) {
+export async function POST(request: { json: () => any; }) {
     const body = await request.json();
-    const { name, email, password } = body.data;
+    const { name, email, password } = body;
 
     if(!name || !email || !password) {
         return NextResponse.json({ error: 'Missing name, email, or password'}, { status: 400 })
-
     }
     const exist = await prisma.user.findUnique({
         where: {
@@ -32,5 +31,5 @@ export async function POST(request) {
         }
     });
 
-    return new NextResponse.json(user, { status: 200 });
+    return NextResponse.json(user, { status: 200 });
 }

@@ -7,10 +7,14 @@ import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {useRouter} from "next/navigation";
+import {toast} from "sonner";
 
-export default function RegisterPage(props) {
+export default function RegisterPage() {
+    const router = useRouter();
+
     const formSchema = z.object({
-        username: z.string().min(1, { message: "Username has to be filled." }),
+        name: z.string().min(1, { message: "Username has to be filled." }),
         email: z.string().min(1, { message: "Email has to be filled." }).email(),
         password: z.string().min(8, { message: "Password must be atleast 8 characters long." }),
     });
@@ -18,21 +22,26 @@ export default function RegisterPage(props) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            username: "",
+            name: "",
             email: "",
             password: "",
         },
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        // await signIn("credentials", {
-        //     ...data,
-        //     redirect: false,
-        // });
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': "application/json"
+            },
+            body: JSON.stringify(values)
+        })
 
-        // router.push("/");
+        if(response.status !== 200) {
+            toast("User already exists or something went wrong.")
+        }
 
-        console.log(values);
+        router.push('/login')
     }
 
     return (
@@ -47,12 +56,12 @@ export default function RegisterPage(props) {
                     <form onSubmit={form.handleSubmit(onSubmit)} className="grid">
                         <FormField
                             control={form.control}
-                            name="username"
+                            name="name"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Username</FormLabel>
                                     <FormControl className="!mt-0">
-                                        <Input placeholder="username" type="text" {...field} />
+                                        <Input placeholder="username" autoComplete="new-username" type="text" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -65,7 +74,7 @@ export default function RegisterPage(props) {
                                 <FormItem className="mt-4">
                                     <FormLabel>Email</FormLabel>
                                     <FormControl className="!mt-0">
-                                        <Input placeholder="email@email.com" type="email" {...field} />
+                                        <Input placeholder="email@email.com" autoComplete="new-email" type="email" {...field} />
                                     </FormControl>
                                     <FormMessage className="transition-all" />
                                 </FormItem>
@@ -78,7 +87,7 @@ export default function RegisterPage(props) {
                                 <FormItem className="mt-4">
                                     <FormLabel>Password</FormLabel>
                                     <FormControl className="!mt-0">
-                                        <Input placeholder="Password" type="password" {...field} />
+                                        <Input placeholder="Password" autoComplete="new-password" type="password" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
