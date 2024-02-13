@@ -5,15 +5,17 @@ import * as React from "react";
 import { ring } from "ldrs";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useTheme } from "next-themes";
 
 export function User() {
     const { user, error, isLoading } = useUser();
+    const { theme } = useTheme();
     ring.register();
 
     if (isLoading)
         return (
             <Button variant={"outline"} size="icon" disabled>
-                <l-ring size="20" speed="2" stroke="2.5" color="white"></l-ring>
+                <l-ring size="20" speed="2" stroke="2.5" color={theme === "dark" ? "white" : "black"} />
             </Button>
         );
     if (error) return <div>{error.message}</div>;
