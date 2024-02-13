@@ -12,7 +12,7 @@ export const authOptions = {
         CredentialsProvider({
             name: "credentials",
             credentials: {
-                username: { label: "Username", type: "text", placeholder: "John Smith" },
+                name: { label: "Name", type: "text", placeholder: "John Smith" },
                 email: { label: "Email", type: "email", placeholder: "example@example.com" },
                 password: { label: "Password", type: "password", placeholder: "Your password" }
             },
@@ -45,7 +45,17 @@ export const authOptions = {
         strategy: "jwt"
     },
     secret: process.env.AUTH_SECRET,
-    debug: process.env.NODE_ENV === "development"
+    debug: process.env.NODE_ENV === "development",
+    callbacks: {
+        session: async (session, user) => {
+            return Promise.resolve({
+                ...session,
+                user: {
+                    ...user,
+                }
+            })
+        },
+    }
 }
 
 const handler = NextAuth(authOptions);
