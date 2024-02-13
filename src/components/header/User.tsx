@@ -40,7 +40,7 @@ export function User() {
                             </Avatar>
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="grid w-[40ch]">
+                    <PopoverContent className="grid w-screen max-w-[40ch]">
                         <div className="grid grid-cols-[min-content_auto_min-content] items-center gap-x-4 gap-y-1">
                             <Avatar className="row-span-2">
                                 <AvatarImage src={user.picture} alt={user.name} />
