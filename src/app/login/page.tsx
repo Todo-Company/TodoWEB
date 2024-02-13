@@ -29,7 +29,7 @@ export default function LoginRegister() {
                     <CardTitle className="scroll-m-20 text-xl font-semibold tracking-tight">
                         Login using media
                     </CardTitle>
-                    <Button variant={"outline"} asChild>
+                    <Button variant={"secondary"} asChild>
                         <Link href="/" className="grid h-fit grid-cols-[1.5rem_1fr] items-center">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
