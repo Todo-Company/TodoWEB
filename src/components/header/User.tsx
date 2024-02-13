@@ -5,7 +5,7 @@ import { ring } from "ldrs";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useTheme } from "next-themes";
-import {signOut, useSession} from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 
 export function User() {
@@ -28,7 +28,7 @@ export function User() {
         const initials =
             namePart.length === 1 ?
                 user.name.charAt(0).toUpperCase()
-                :   `${user.name.charAt(0).toUpperCase()}${namePart[namePart.length - 1].charAt(0).toUpperCase()}`;
+            :   `${user.name.charAt(0).toUpperCase()}${namePart[namePart.length - 1].charAt(0).toUpperCase()}`;
         return (
             user && (
                 <Popover>
