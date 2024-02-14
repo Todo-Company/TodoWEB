@@ -6,7 +6,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import {
     Command,
-    CommandDialog,
     CommandEmpty,
     CommandGroup,
     CommandInput,
@@ -28,7 +27,7 @@ import CtrlPlus from "@/components/ui/shortcut";
 import Tutorial from "../tutorial";
 
 import Link from "next/link";
-import {useSession} from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export default function Header() {
     const [date, setDate] = React.useState<Date>();
@@ -87,11 +86,15 @@ export default function Header() {
                 </Link>
 
                 <div className="ml-auto flex gap-4">
-                    {session === null && status === "unauthenticated" || status === "loading" ? null : (
+                    {(session === null && status === "unauthenticated") || status === "loading" ? null : (
                         <nav className="flex gap-4" aria-label="Date and Search navigation">
                             <Popover open={open} onOpenChange={setOpen}>
                                 <PopoverTrigger asChild>
-                                    <Button onClick={() => setOpen(!open)} variant={"outline"} className="group max-lg:p-2">
+                                    <Button
+                                        onClick={() => setOpen(!open)}
+                                        variant={"outline"}
+                                        className="group max-lg:p-2"
+                                    >
                                         <div className="flex w-[280px] justify-between gap-8 text-muted-foreground max-lg:hidden">
                                             <span className="flex items-center font-normal transition-colors group-hover:!text-foreground">
                                                 <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 stroke-muted-foreground stroke-1 opacity-50 transition-all group-hover:!stroke-foreground group-hover:opacity-100" />
