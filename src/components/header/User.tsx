@@ -6,24 +6,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useTheme } from "next-themes";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import {Skeleton} from "@/components/ui/skeleton";
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet"
-import {EditUser} from "@/components/EditUser";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { EditUser } from "@/components/EditUser";
 export function User() {
     const { data, status } = useSession();
     const { theme } = useTheme();
 
     if (status === "loading") {
-        return (
-            <Skeleton className="h-9 w-9 rounded-full" />
-        );
+        return <Skeleton className="h-9 w-9 rounded-full" />;
     }
 
     if (data) {
@@ -54,16 +45,12 @@ export function User() {
                                 <AvatarFallback>{initials}</AvatarFallback>
                             </Avatar>
                             <h2 className="line-clamp-1 break-all text-lg font-semibold">{user.name}</h2>
-                            <Button
-                                variant={"ghost"}
-                                className="group h-6 w-6 p-1"
-                                tabIndex={1}
-                            >
+                            <Button variant={"ghost"} className="group h-6 w-6 p-1" tabIndex={1}>
                                 <Sheet>
                                     <SheetTrigger>
-                                        <Pencil className="cursor-pointer stroke-muted-foreground transition-colors group-hover:stroke-foreground" />
+                                        <Pencil className="w-4 cursor-pointer stroke-muted-foreground transition-colors group-hover:stroke-foreground" />
                                     </SheetTrigger>
-                                    <EditUser user={data} status={status}/>
+                                    <EditUser user={data} status={status} />
                                 </Sheet>
                             </Button>
                             <small className="col-span-2 line-clamp-1 break-all pb-1 text-xs font-medium leading-none text-muted-foreground">
@@ -71,7 +58,12 @@ export function User() {
                             </small>
                         </div>
 
-                        <Button variant={"destructive"} className="mt-4" tabIndex={2} onClick={async () => await signOut()}>
+                        <Button
+                            variant={"destructive"}
+                            className="mt-4"
+                            tabIndex={2}
+                            onClick={async () => await signOut()}
+                        >
                             Logout
                         </Button>
                     </PopoverContent>
