@@ -35,6 +35,7 @@ export default function LoginPage() {
 
         if (res && res.ok) {
             router.push("/");
+            toast("Successfully logged in")
         } else {
             toast("Something went wrong, please try again.");
         }

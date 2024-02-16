@@ -6,7 +6,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import {
     Command,
-    CommandDialog,
     CommandEmpty,
     CommandGroup,
     CommandInput,
@@ -28,10 +27,12 @@ import CtrlPlus from "@/components/ui/shortcut";
 import Tutorial from "../tutorial";
 
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export default function Header() {
     const [date, setDate] = React.useState<Date>();
     const [open, setOpen] = React.useState(false);
+    const { data: session, status } = useSession();
 
     React.useEffect(() => {
         const down = (e: KeyboardEvent) => {
@@ -85,87 +86,93 @@ export default function Header() {
                 </Link>
 
                 <div className="ml-auto flex gap-4">
-                    <nav className="flex gap-4" aria-label="Date and Search navigation">
-                        <Popover open={open} onOpenChange={setOpen}>
-                            <PopoverTrigger asChild>
-                                <Button onClick={() => setOpen(!open)} variant={"outline"} className="group max-lg:p-2">
-                                    <div className="flex w-[280px] justify-between gap-8 text-muted-foreground max-lg:hidden">
-                                        <span className="flex items-center font-normal transition-colors group-hover:!text-foreground">
-                                            <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 stroke-muted-foreground stroke-1 opacity-50 transition-all group-hover:!stroke-foreground group-hover:opacity-100" />
-                                            Search for TODOs
-                                        </span>
-                                        <CtrlPlus letter="k" />
-                                    </div>
-                                    <div className="lg:hidden">
-                                        <Menu className="h-4 w-4" />
-                                    </div>
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="p-0">
-                                <Command>
-                                    <CommandInput placeholder="Type a command or search..." />
-                                    <CommandList className="antialiased">
-                                        <CommandEmpty>No results found.</CommandEmpty>
-                                        <CommandGroup heading="Todos">
-                                            <CommandItem>
-                                                All
-                                                <CommandShortcut>
-                                                    <CtrlPlus letter="a" />
-                                                </CommandShortcut>
-                                            </CommandItem>
-
-                                            <CommandItem>
-                                                String
-                                                <CommandShortcut>
-                                                    <CtrlPlus letter="s" />
-                                                </CommandShortcut>
-                                            </CommandItem>
-                                            <CommandItem>
-                                                Progressed
-                                                <CommandShortcut>
-                                                    <CtrlPlus letter="p" />
-                                                </CommandShortcut>
-                                            </CommandItem>
-                                        </CommandGroup>
-                                        <CommandSeparator />
-                                        <CommandGroup heading="Application">
-                                            <Link href="/login">
-                                                <CommandItem className="cursor-pointer">Login</CommandItem>
-                                            </Link>
-                                            <CommandItem>
-                                                <Tutorial />
-                                            </CommandItem>
-                                            <CommandItem>Settings</CommandItem>
-                                        </CommandGroup>
-                                    </CommandList>
-                                </Command>
-                            </PopoverContent>
-                        </Popover>
-
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <div>
+                    {(session === null && status === "unauthenticated") || status === "loading" ? null : (
+                        <nav className="flex gap-4" aria-label="Date and Search navigation">
+                            <Popover open={open} onOpenChange={setOpen}>
+                                <PopoverTrigger asChild>
                                     <Button
+                                        onClick={() => setOpen(!open)}
                                         variant={"outline"}
-                                        className={cn(
-                                            "w-[280px] justify-start text-left font-normal max-lg:hidden",
-                                            !date && "text-muted-foreground",
-                                        )}
+                                        className="group max-lg:p-2"
                                     >
-                                        <CalendarIcon className="mr-2 h-4 w-4" />
-                                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                        <div className="flex w-[280px] justify-between gap-8 text-muted-foreground max-lg:hidden">
+                                            <span className="flex items-center font-normal transition-colors group-hover:!text-foreground">
+                                                <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 stroke-muted-foreground stroke-1 opacity-50 transition-all group-hover:!stroke-foreground group-hover:opacity-100" />
+                                                Search for TODOs
+                                            </span>
+                                            <CtrlPlus letter="k" />
+                                        </div>
+                                        <div className="lg:hidden">
+                                            <Menu className="h-4 w-4" />
+                                        </div>
                                     </Button>
-                                    <Button variant={"outline"} size={"icon"} className="lg:hidden">
-                                        <CalendarIcon className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            </PopoverTrigger>
+                                </PopoverTrigger>
+                                <PopoverContent className="p-0">
+                                    <Command>
+                                        <CommandInput placeholder="Type a command or search..." />
+                                        <CommandList className="antialiased">
+                                            <CommandEmpty>No results found.</CommandEmpty>
+                                            <CommandGroup heading="Todos">
+                                                <CommandItem>
+                                                    All
+                                                    <CommandShortcut>
+                                                        <CtrlPlus letter="a" />
+                                                    </CommandShortcut>
+                                                </CommandItem>
 
-                            <PopoverContent className="w-auto p-0">
-                                <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
-                            </PopoverContent>
-                        </Popover>
-                    </nav>
+                                                <CommandItem>
+                                                    String
+                                                    <CommandShortcut>
+                                                        <CtrlPlus letter="s" />
+                                                    </CommandShortcut>
+                                                </CommandItem>
+                                                <CommandItem>
+                                                    Progressed
+                                                    <CommandShortcut>
+                                                        <CtrlPlus letter="p" />
+                                                    </CommandShortcut>
+                                                </CommandItem>
+                                            </CommandGroup>
+                                            <CommandSeparator />
+                                            <CommandGroup heading="Application">
+                                                <Link href="/login">
+                                                    <CommandItem className="cursor-pointer">Login</CommandItem>
+                                                </Link>
+                                                <CommandItem>
+                                                    <Tutorial />
+                                                </CommandItem>
+                                                <CommandItem>Settings</CommandItem>
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
+
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <div>
+                                        <Button
+                                            variant={"outline"}
+                                            className={cn(
+                                                "w-[280px] justify-start text-left font-normal max-lg:hidden",
+                                                !date && "text-muted-foreground",
+                                            )}
+                                        >
+                                            <CalendarIcon className="mr-2 h-4 w-4" />
+                                            {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                        </Button>
+                                        <Button variant={"outline"} size={"icon"} className="lg:hidden">
+                                            <CalendarIcon className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </PopoverTrigger>
+
+                                <PopoverContent className="w-auto p-0">
+                                    <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+                                </PopoverContent>
+                            </Popover>
+                        </nav>
+                    )}
 
                     <ModeToggle />
 
