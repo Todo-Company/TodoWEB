@@ -9,32 +9,25 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useSession } from "next-auth/react";
 
-export function EditUser(props: { user: Session; status }) {
+export function EditUser(props: { user: any; status: string }) {
+    const { data, status, update } = useSession();
+
     const formSchema = z.object({
         name: z.string().min(1, { message: "This field must have a value!" }).max(50),
     });
 
-    const [data, setData] = useState({
-        userId: "",
-        name: "",
-    });
-
-    useEffect(() => {
-        setData({
-            userId: props.user.token.sub,
-            name: props.user.session.user.name,
-        });
-    }, [props.user]);
-
     const editProfile = async (values: z.infer<typeof formSchema>) => {
-        // TODO: continue zde
+        await update({
+            name: values.name,
+        });
     };
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: props.user.session.user.name,
+            name: props.user.name,
         },
     });
 

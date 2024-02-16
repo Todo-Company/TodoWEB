@@ -17,7 +17,7 @@ export const authOptions = {
                 password: { label: "Password", type: "password", placeholder: "Your password" }
             },
             async authorize(credentials) {
-                if(!credentials.email || !credentials.password) {
+                if(!credentials?.email || !credentials?.password) {
                     return null;
                 }
 
@@ -31,7 +31,7 @@ export const authOptions = {
                     return null;
                 }
 
-                const passwordsMatch = await bcrypt.compare(credentials.password, user.password);
+                const passwordsMatch = await bcrypt.compare(credentials.password, user.password ?? "");
 
                 if(!passwordsMatch) {
                     return null;
@@ -47,13 +47,41 @@ export const authOptions = {
     secret: process.env.AUTH_SECRET,
     debug: process.env.NODE_ENV === "development",
     callbacks: {
-        session: async (session, user) => {
-            return Promise.resolve({
-                ...session,
-                user: {
-                    ...user,
+        jwt: async({ token, user, session, trigger }: {token: any, user: any, session: any, trigger: any}) => {
+            if (trigger === "update" && session.name) {
+                token.name = session.name;
+            }
+
+            if (user) {
+                return {
+                    ...token,
+                    id: user.id,
+                    name: user.name,
+                    email: user.email
+                }
+            }
+
+            await prisma.user.update({
+                where: {
+                    id: token.id
+                },
+                data: {
+                    name: token.name
                 }
             })
+
+            return token;
+        },
+        session: async({session , user, token}: {session: any, user: any, token: any}) => {
+            return {
+                ...session,
+                user: {
+                    ...session.user,
+                    id: token.id,
+                    name: token.name,
+                    email: token.email
+                }
+            }
         },
     }
 }

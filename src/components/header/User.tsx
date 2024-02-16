@@ -18,9 +18,8 @@ export function User() {
     }
 
     if (data) {
-        // @ts-ignore
-        const user = data.session.user;
-        if (!user.name || user.name.trim() === "") return "A";
+        const user = data.user;
+        if (!user?.name || user?.name.trim() === "") return "A";
 
         const namePart = user.name.split(" ");
         const initials =
@@ -50,7 +49,7 @@ export function User() {
                                     <SheetTrigger>
                                         <Pencil className="w-4 cursor-pointer stroke-muted-foreground transition-colors group-hover:stroke-foreground" />
                                     </SheetTrigger>
-                                    <EditUser user={data} status={status} />
+                                    <EditUser user={data.user} status={status} />
                                 </Sheet>
                             </Button>
                             <small className="col-span-2 line-clamp-1 break-all pb-1 text-xs font-medium leading-none text-muted-foreground">
