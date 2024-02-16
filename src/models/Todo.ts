@@ -8,7 +8,16 @@ export class Todo {
     private _type: boolean;
     private _subTodos: Todo[];
 
-    constructor(id: string, name: string, description: string, goalDate: Date, creationDate: Date, finishedDate: Date, type: boolean, subTodos: Todo[]) {
+    constructor(
+        id: string,
+        name: string,
+        description: string,
+        goalDate: Date,
+        creationDate: Date,
+        finishedDate: Date,
+        type: boolean,
+        subTodos: Todo[],
+    ) {
         this._id = id;
         this._name = name;
         this._description = description;

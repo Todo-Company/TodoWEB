@@ -18,11 +18,11 @@ export default function RegisterPage() {
 
     useEffect(() => {
         async function getLoader() {
-          const { zoomies } = await import('ldrs')
-          zoomies.register()
+            const { zoomies } = await import("ldrs");
+            zoomies.register();
         }
-        getLoader()
-      }, [])
+        getLoader();
+    }, []);
 
     const formSchema = z.object({
         name: z.string().min(1, { message: "Username has to be filled." }),
