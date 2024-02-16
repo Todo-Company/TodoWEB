@@ -15,7 +15,7 @@ import {
     CommandShortcut,
 } from "@/components/ui/command";
 
-import { Calendar as CalendarIcon, Menu } from "lucide-react";
+import { Calendar as CalendarIcon, Menu, LogOut, Settings2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -25,14 +25,29 @@ import { User } from "@/components/header/User";
 
 import CtrlPlus from "@/components/ui/shortcut";
 import Tutorial from "../tutorial";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { BookOpenText } from "lucide-react";
 
 export default function Header() {
     const [date, setDate] = React.useState<Date>();
     const [open, setOpen] = React.useState(false);
     const { data: session, status } = useSession();
+    const [tutorialOpen, tutorialSetOpen] = React.useState(false);
+
+    React.useEffect(() => {
+        const down = (e: KeyboardEvent) => {
+            if (e.key === "?" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                tutorialSetOpen((tutorialOpen) => !tutorialOpen);
+            }
+        };
+
+        document.addEventListener("keydown", down);
+        return () => document.removeEventListener("keydown", down);
+    }, []);
 
     React.useEffect(() => {
         const down = (e: KeyboardEvent) => {
@@ -110,7 +125,7 @@ export default function Header() {
                                     </PopoverTrigger>
                                     <PopoverContent className="p-0">
                                         <Command>
-                                            <CommandInput placeholder="Type a command or search..." />
+                                            <CommandInput tabIndex={1} placeholder="Type a command or search..." />
                                             <CommandList className="antialiased">
                                                 <CommandEmpty>No results found.</CommandEmpty>
                                                 <CommandGroup heading="Todos">
@@ -136,13 +151,35 @@ export default function Header() {
                                                 </CommandGroup>
                                                 <CommandSeparator />
                                                 <CommandGroup heading="Application">
-                                                    <Link href="/login">
-                                                        <CommandItem className="cursor-pointer">Login</CommandItem>
-                                                    </Link>
-                                                    <CommandItem>
-                                                        <Tutorial />
+                                                    <CommandItem
+                                                        onSelect={() =>
+                                                            tutorialSetOpen((tutorialOpen) => !tutorialOpen)
+                                                        }
+                                                    >
+                                                        <Dialog open={tutorialOpen} onOpenChange={tutorialSetOpen}>
+                                                            <DialogTrigger className="flex w-full justify-between gap-2 text-left">
+                                                                <BookOpenText className="w-4 stroke-muted-foreground" />
+                                                                Tutorial
+                                                                <CommandShortcut>
+                                                                    <CtrlPlus letter="?" />
+                                                                </CommandShortcut>
+                                                            </DialogTrigger>
+                                                            <Tutorial />
+                                                        </Dialog>
                                                     </CommandItem>
-                                                    <CommandItem>Settings</CommandItem>
+                                                    <CommandItem className="flex cursor-pointer items-center gap-2">
+                                                        <Settings2
+                                                            className="w-4 stroke-muted-foreground" // TODO
+                                                        />
+                                                        Settings
+                                                    </CommandItem>
+                                                    <CommandItem
+                                                        className="flex cursor-pointer items-center gap-2"
+                                                        onClick={async () => await signOut()} // TODO
+                                                    >
+                                                        <LogOut className="w-4 stroke-muted-foreground" />
+                                                        Signout
+                                                    </CommandItem>
                                                 </CommandGroup>
                                             </CommandList>
                                         </Command>
@@ -175,7 +212,9 @@ export default function Header() {
                             </nav>
 
                             <div className="hidden">
-                                <Tutorial />
+                                <Dialog open={tutorialOpen} onOpenChange={tutorialSetOpen}>
+                                    <Tutorial />
+                                </Dialog>
                             </div>
                         </>
                     )}
