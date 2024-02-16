@@ -9,9 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTheme } from "next-themes";
+import { zoomies } from "ldrs";
 
 export default function RegisterPage() {
     const router = useRouter();
+    zoomies.register();
+    const { theme } = useTheme();
 
     const formSchema = z.object({
         name: z.string().min(1, { message: "Username has to be filled." }),
@@ -19,7 +23,7 @@ export default function RegisterPage() {
         password: z.string().min(8, { message: "Password must be atleast 8 characters long." }),
     });
 
-    const form = useForm<z.infer<typeof formSchema>>({
+    const { formState, ...form } = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
@@ -27,6 +31,7 @@ export default function RegisterPage() {
             password: "",
         },
     });
+    const { isSubmitting } = formState;
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         const response = await fetch("/api/register", {
@@ -52,7 +57,7 @@ export default function RegisterPage() {
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <Form {...form}>
+                <Form {...form} formState={formState}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="grid">
                         <FormField
                             control={form.control}
@@ -65,6 +70,7 @@ export default function RegisterPage() {
                                             placeholder="username"
                                             autoComplete="new-username"
                                             type="text"
+                                            disabled={isSubmitting}
                                             {...field}
                                         />
                                     </FormControl>
@@ -83,6 +89,7 @@ export default function RegisterPage() {
                                             placeholder="email@email.com"
                                             autoComplete="new-email"
                                             type="email"
+                                            disabled={isSubmitting}
                                             {...field}
                                         />
                                     </FormControl>
@@ -101,6 +108,7 @@ export default function RegisterPage() {
                                             placeholder="Password"
                                             autoComplete="new-password"
                                             type="password"
+                                            disabled={isSubmitting}
                                             {...field}
                                         />
                                     </FormControl>
@@ -109,8 +117,17 @@ export default function RegisterPage() {
                             )}
                         />
 
-                        <Button variant={"default"} type="submit" className="mt-8">
-                            Register
+                        <Button variant={"default"} type="submit" className="mt-8" disabled={isSubmitting}>
+                            {!isSubmitting ?
+                                "Register"
+                            :   <l-zoomies
+                                    size="80"
+                                    stroke="5"
+                                    bg-opacity="0.1"
+                                    speed="1.4"
+                                    color={theme === "dark" ? "black" : "white"}
+                                />
+                            }
                         </Button>
                     </form>
                 </Form>

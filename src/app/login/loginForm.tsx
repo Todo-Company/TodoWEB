@@ -10,22 +10,27 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { zoomies } from "ldrs";
+import { useTheme } from "next-themes";
 
 export default function LoginPage() {
+    zoomies.register();
     const router = useRouter();
+    const { theme } = useTheme();
 
     const formSchema = z.object({
         email: z.string().min(1, { message: "Email has to be filled." }).email(),
         password: z.string().min(8, { message: "Password must be atleast 8 characters long." }),
     });
 
-    const form = useForm<z.infer<typeof formSchema>>({
+    const { formState, ...form } = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             email: "",
             password: "",
         },
     });
+    const { isSubmitting } = formState;
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         let res = await signIn("credentials", {
@@ -35,7 +40,7 @@ export default function LoginPage() {
 
         if (res && res.ok) {
             router.push("/");
-            toast("Successfully logged in")
+            toast("Successfully logged in");
         } else {
             toast("Something went wrong, please try again.");
         }
@@ -49,7 +54,7 @@ export default function LoginPage() {
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <Form {...form}>
+                <Form {...form} formState={formState}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="grid">
                         <FormField
                             control={form.control}
@@ -62,6 +67,7 @@ export default function LoginPage() {
                                             placeholder="email@email.com"
                                             autoComplete="current-email"
                                             type="email"
+                                            disabled={isSubmitting}
                                             {...field}
                                         />
                                     </FormControl>
@@ -80,6 +86,7 @@ export default function LoginPage() {
                                             placeholder="Password"
                                             autoComplete="current-password"
                                             type="password"
+                                            disabled={isSubmitting}
                                             {...field}
                                         />
                                     </FormControl>
@@ -92,8 +99,17 @@ export default function LoginPage() {
                             <a href="#">Forgot password?</a>
                         </Button>
 
-                        <Button variant={"default"} type="submit" className="mt-4">
-                            Log in
+                        <Button variant={"default"} type="submit" className="mt-4" disabled={isSubmitting}>
+                            {!isSubmitting ?
+                                "Log in"
+                            :   <l-zoomies
+                                    size="80"
+                                    stroke="5"
+                                    bg-opacity="0.1"
+                                    speed="1.4"
+                                    color={theme === "dark" ? "black" : "white"}
+                                />
+                            }
                         </Button>
                     </form>
                 </Form>

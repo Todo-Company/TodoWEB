@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import * as React from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useTheme } from "next-themes";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,7 +10,6 @@ import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { EditUser } from "@/components/EditUser";
 export function User() {
     const { data, status } = useSession();
-    const { theme } = useTheme();
 
     if (status === "loading") {
         return <Skeleton className="h-9 w-9 rounded-full" />;
