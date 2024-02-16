@@ -10,9 +10,13 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
+import { zoomies } from "ldrs";
 
 export function EditUser(props: { user: any; status: string }) {
+    const { theme } = useTheme();
     const { data, status, update } = useSession();
+    zoomies.register();
 
     const formSchema = z.object({
         name: z.string().min(1, { message: "This field must have a value!" }).max(50),
@@ -24,12 +28,13 @@ export function EditUser(props: { user: any; status: string }) {
         });
     };
 
-    const form = useForm<z.infer<typeof formSchema>>({
+    const { formState, ...form } = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: props.user.name,
         },
     });
+    const { isSubmitting } = formState;
 
     return (
         <SheetContent className="sm:max-w-[40ch]">
@@ -41,7 +46,7 @@ export function EditUser(props: { user: any; status: string }) {
                 </SheetDescription>
             </SheetHeader>
 
-            <Form {...form}>
+            <Form {...form} formState={formState}>
                 <form onSubmit={form.handleSubmit(editProfile)} className="mt-4 grid">
                     <FormField
                         control={form.control}
@@ -50,7 +55,7 @@ export function EditUser(props: { user: any; status: string }) {
                             <FormItem>
                                 <FormLabel>Username</FormLabel>
                                 <FormControl className="!mt-0">
-                                    <Input placeholder="Username" type="text" {...field} />
+                                    <Input placeholder="Username" type="text" {...field} disabled={isSubmitting} />
                                 </FormControl>
                                 <FormDescription className="!mt-1">This is your display name.</FormDescription>
                                 <FormMessage />
@@ -58,7 +63,16 @@ export function EditUser(props: { user: any; status: string }) {
                         )}
                     />
                     <Button type="submit" variant={"default"} className="mt-4">
-                        Submit
+                        {!isSubmitting ?
+                            "Submit"
+                        :   <l-zoomies
+                                size="80"
+                                stroke="5"
+                                bg-opacity="0.1"
+                                speed="1.4"
+                                color={theme === "dark" ? "black" : "white"}
+                            />
+                        }
                     </Button>
                 </form>
             </Form>
