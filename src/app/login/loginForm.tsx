@@ -10,13 +10,20 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { zoomies } from "ldrs";
 import { useTheme } from "next-themes";
+import { useEffect } from "react";
 
 export default function LoginPage() {
-    zoomies.register();
     const router = useRouter();
     const { theme } = useTheme();
+
+    useEffect(() => {
+        async function getLoader() {
+          const { zoomies } = await import('ldrs')
+          zoomies.register()
+        }
+        getLoader()
+      }, [])
 
     const formSchema = z.object({
         email: z.string().min(1, { message: "Email has to be filled." }).email(),

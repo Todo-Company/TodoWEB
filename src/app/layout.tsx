@@ -22,7 +22,6 @@ export default function RootLayout({
                     href="https://api.fontshare.com/v2/css?f[]=satoshi@1,900,700,500,301,701,300,501,401,901,400,2&display=swap"
                     rel="stylesheet"
                 ></link>
-                <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/lineSpinner.js" defer></script>
                 <title>TODO</title>
                 <link rel="icon" href="/icon.png" type="image/png" />
             </head>
