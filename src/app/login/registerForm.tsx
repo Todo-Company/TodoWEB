@@ -10,12 +10,19 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTheme } from "next-themes";
-import { zoomies } from "ldrs";
+import { useEffect } from "react";
 
 export default function RegisterPage() {
     const router = useRouter();
-    zoomies.register();
     const { theme } = useTheme();
+
+    useEffect(() => {
+        async function getLoader() {
+          const { zoomies } = await import('ldrs')
+          zoomies.register()
+        }
+        getLoader()
+      }, [])
 
     const formSchema = z.object({
         name: z.string().min(1, { message: "Username has to be filled." }),
