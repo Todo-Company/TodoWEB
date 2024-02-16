@@ -175,7 +175,7 @@ export default function Header() {
                                                     </CommandItem>
                                                     <CommandItem
                                                         className="flex cursor-pointer items-center gap-2"
-                                                        onClick={async () => await signOut()} // TODO
+                                                        onSelect={async () => await signOut()}
                                                     >
                                                         <LogOut className="w-4 stroke-muted-foreground" />
                                                         Signout
