@@ -17,27 +17,34 @@ export const authOptions = {
                 password: { label: "Password", type: "password", placeholder: "Your password" },
             },
             async authorize(credentials) {
-                if (!credentials?.email || !credentials?.password) {
+                try {
+                    if (!credentials?.email || !credentials?.password) {
+                        return null;
+                    }
+
+                    const user = await prisma.user.findUnique({
+                        where: {
+                            email: credentials.email,
+                        },
+                    });
+
+                    if (!user) {
+                        return null;
+                    }
+
+                    const passwordsMatch = await bcrypt.compare(credentials.password, user.password ?? "");
+
+                    if (!passwordsMatch) {
+                        return null;
+                    }
+
+                    return user;
+                } catch (err) {
+                    console.error(err);
                     return null;
+                } finally {
+                    await prisma.$disconnect();
                 }
-
-                const user = await prisma.user.findUnique({
-                    where: {
-                        email: credentials.email,
-                    },
-                });
-
-                if (!user) {
-                    return null;
-                }
-
-                const passwordsMatch = await bcrypt.compare(credentials.password, user.password ?? "");
-
-                if (!passwordsMatch) {
-                    return null;
-                }
-
-                return user;
             },
         }),
     ],
@@ -48,29 +55,36 @@ export const authOptions = {
     debug: process.env.NODE_ENV === "development",
     callbacks: {
         jwt: async ({ token, user, session, trigger }: { token: any; user: any; session: any; trigger: any }) => {
-            if (trigger === "update" && session.name) {
-                token.name = session.name;
+            try {
+                if (trigger === "update" && session.name) {
+                    token.name = session.name;
+                }
+
+                if (user) {
+                    return {
+                        ...token,
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                    };
+                }
+
+                await prisma.user.update({
+                    where: {
+                        id: token.id,
+                    },
+                    data: {
+                        name: token.name,
+                    },
+                });
+
+                return token;
+            } catch (err) {
+                console.error(err);
+                return token;
+            } finally {
+                await prisma.$disconnect();
             }
-
-            if (user) {
-                return {
-                    ...token,
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                };
-            }
-
-            await prisma.user.update({
-                where: {
-                    id: token.id,
-                },
-                data: {
-                    name: token.name,
-                },
-            });
-
-            return token;
         },
         session: async ({ session, user, token }: { session: any; user: any; token: any }) => {
             return {
