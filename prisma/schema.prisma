@@ -45,27 +45,34 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-type TypeTodo {
-  completed Boolean
-  created   DateTime   @db.Date
-  goalDate  DateTime   @db.Date
-  title     String
-  subTodos  TypeTodo[]
-  type      TodoEnum
-  userId    String     @db.ObjectId
-}
-
 model Todo {
   id          String       @id @default(auto()) @map("_id") @db.ObjectId
   completed   Boolean
   created     DateTime     @db.Date
   goalDate    DateTime     @db.Date
   title       String
-  subTodos    TypeTodo[]
   type        TodoEnum
   priority    PriorityEnum
   expectation TimeRange
   userId      String       @db.ObjectId
+  subTodos    SubTodo[]
+}
+
+model SubTodo {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  completed       Boolean
+  created         DateTime     @db.Date
+  goalDate        DateTime     @db.Date
+  title           String
+  type            TodoEnum
+  priority        PriorityEnum
+  expectation     TimeRange
+  todoId          String       @db.ObjectId
+  todo            Todo         @relation(fields: [todoId], references: [id])
+  userId          String       @db.ObjectId
+  subTodos        SubTodo[]    @relation("SubTodoToSubTodo")
+  parentSubTodoId String?      @db.ObjectId
+  parentSubTodo   SubTodo?     @relation("SubTodoToSubTodo", fields: [parentSubTodoId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 type TimeRange {

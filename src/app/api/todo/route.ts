@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-async function createSimpleTodo(title: string, userId: string) {
+async function createTodo(title: string, userId: string, type: TodoEnum) {
     return await prisma.todo.create({
         data: {
             completed: false,
@@ -15,70 +15,104 @@ async function createSimpleTodo(title: string, userId: string) {
                 startTime: new Date(),
                 endTime: new Date(),
             },
-            title: title,
-            type: TodoEnum.SIMPLE,
-            userId: userId,
+            title,
+            type,
+            userId,
         },
     });
 }
 
-async function createSequentialTodo(title: string, userId: string) {
-    return await prisma.todo.create({
-        data: {
-            completed: false,
-            created: new Date(),
-            goalDate: new Date(),
-            priority: PriorityEnum.HIGH,
-            expectation: {
-                startTime: new Date(),
-                endTime: new Date(),
-            },
-            title: title,
-            type: TodoEnum.SEQUENTIAL,
-            userId: userId,
-            subTodos: [],
-        },
-    });
-}
-
-async function createSectionTodo(title: string, userId: string) {
-    return await prisma.todo.create({
-        data: {
-            completed: false,
-            created: new Date(),
-            goalDate: new Date(),
-            priority: PriorityEnum.HIGH,
-            expectation: {
-                startTime: new Date(),
-                endTime: new Date(),
-            },
-            title: title,
-            type: TodoEnum.SECTION,
-            userId: userId,
-            subTodos: [],
-        },
-    });
+async function createSubTodo(
+    title: string,
+    userId: string,
+    type: TodoEnum,
+    parentId?: string,
+    parentSubTodoId?: string,
+) {
+    if (parentId) {
+        if (parentSubTodoId) {
+            return await prisma.subTodo.create({
+                data: {
+                    completed: false,
+                    created: new Date(),
+                    goalDate: new Date(),
+                    title,
+                    type,
+                    priority: PriorityEnum.HIGH,
+                    expectation: {
+                        startTime: new Date(),
+                        endTime: new Date(),
+                    },
+                    userId,
+                    todoId: parentId,
+                    parentSubTodoId,
+                },
+                include: {
+                    subTodos: true,
+                },
+            });
+        } else {
+            return await prisma.subTodo.create({
+                data: {
+                    completed: false,
+                    created: new Date(),
+                    goalDate: new Date(),
+                    title,
+                    type,
+                    priority: PriorityEnum.HIGH,
+                    expectation: {
+                        startTime: new Date(),
+                        endTime: new Date(),
+                    },
+                    userId,
+                    todoId: parentId,
+                },
+                include: {
+                    subTodos: true,
+                },
+            });
+        }
+    } else {
+        throw new Error("Parent ID must be provided to create a subtodo.");
+    }
 }
 
 async function createTodoHandler(req: any) {
     try {
         const body = await req.json();
-        const { type } = body;
+        const { title, userId, type, isSubtodo } = body;
         let data;
 
-        switch (type) {
-            case TodoEnum.SIMPLE:
-                data = await createSimpleTodo(body.title, body.userId);
-                break;
-            case TodoEnum.SEQUENTIAL:
-                data = await createSequentialTodo(body.title, body.userId);
-                break;
-            case TodoEnum.SECTION:
-                data = await createSectionTodo(body.title, body.userId);
-                break;
-            default:
-                data = { error: "Invalid type" };
-                break;
+        if (isSubtodo) {
+            switch (type) {
+                case TodoEnum.SIMPLE:
+                    data = await createSubTodo(title, userId, type, body.parentId, body.parentSubTodoId);
+                    break;
+                case TodoEnum.SEQUENTIAL:
+                    data = await createSubTodo(title, userId, type, body.parentId, body.parentSubTodoId);
+                    break;
+                case TodoEnum.SECTION:
+                    data = await createSubTodo(title, userId, type, body.parentId, body.parentSubTodoId);
+                    break;
+                default:
+                    data = { error: "Invalid type" };
+                    break;
+            }
+        } else {
+            switch (type) {
+                case TodoEnum.SIMPLE:
+                    data = await createTodo(title, userId, type);
+                    break;
+                case TodoEnum.SEQUENTIAL:
+                    data = await createTodo(title, userId, type);
+                    break;
+                case TodoEnum.SECTION:
+                    data = await createTodo(title, userId, type);
+                    break;
+                default:
+                    data = { error: "Invalid type" };
+                    break;
+            }
         }
 
         return NextResponse.json(data, { status: 200 });
@@ -94,11 +128,35 @@ async function getTodosHandler(req: NextApiRequest) {
     try {
         const { searchParams } = new URL(req.url as string);
         const userId = searchParams.get("userId");
-        const todos: Todo[] = await prisma.todo.findMany({
+        let todos: Todo[] = await prisma.todo.findMany({
             where: {
                 userId: String(userId),
             },
+            include: {
+                subTodos: {
+                    include: {
+                        subTodos: {
+                            include: {
+                                subTodos: {
+                                    include: {
+                                        subTodos: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
         });
+
+        if (todos) {
+            todos.forEach((todo) => {
+                if (todo.subTodos) {
+                    todo.subTodos = todo.subTodos.filter((subTodo) => subTodo.parentSubTodoId === null);
+                }
+            });
+        }
+
         return NextResponse.json(todos, { status: 200 });
     } catch (error) {
         console.error(error);
