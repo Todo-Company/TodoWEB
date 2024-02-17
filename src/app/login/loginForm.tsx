@@ -19,11 +19,11 @@ export default function LoginPage() {
 
     useEffect(() => {
         async function getLoader() {
-          const { zoomies } = await import('ldrs')
-          zoomies.register()
+            const { zoomies } = await import("ldrs");
+            zoomies.register();
         }
-        getLoader()
-      }, [])
+        getLoader();
+    }, []);
 
     const formSchema = z.object({
         email: z.string().min(1, { message: "Email has to be filled." }).email(),
