@@ -151,22 +151,25 @@ export default function Header() {
                                                 </CommandGroup>
                                                 <CommandSeparator />
                                                 <CommandGroup heading="Application">
-                                                    <CommandItem
-                                                        onSelect={() =>
-                                                            tutorialSetOpen((tutorialOpen) => !tutorialOpen)
-                                                        }
-                                                    >
-                                                        <Dialog open={tutorialOpen} onOpenChange={tutorialSetOpen}>
-                                                            <DialogTrigger className="flex w-full justify-between gap-2 text-left">
+                                                    <Dialog open={tutorialOpen} onOpenChange={tutorialSetOpen}>
+                                                        <DialogTrigger className="w-full">
+                                                            <CommandItem
+                                                                onSelect={() =>
+                                                                    tutorialSetOpen((tutorialOpen) => !tutorialOpen)
+                                                                }
+                                                                className="flex w-full justify-between gap-2 text-left"
+                                                            >
                                                                 <BookOpenText className="w-4 stroke-muted-foreground" />
                                                                 Tutorial
                                                                 <CommandShortcut>
                                                                     <CtrlPlus letter="?" />
                                                                 </CommandShortcut>
-                                                            </DialogTrigger>
-                                                            <Tutorial />
-                                                        </Dialog>
-                                                    </CommandItem>
+                                                            </CommandItem>
+                                                        </DialogTrigger>
+
+                                                        <Tutorial />
+                                                    </Dialog>
+
                                                     <CommandItem className="flex cursor-pointer items-center gap-2">
                                                         <Settings2
                                                             className="w-4 stroke-muted-foreground" // TODO
