@@ -1,22 +1,26 @@
-import { NextApiRequest } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { PriorityEnum, PrismaClient, Todo, TodoEnum } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-async function createTodo(title: string, userId: string, type: TodoEnum) {
+async function createTodo(
+    title: string,
+    userId: string,
+    type: "SECTION" | "SIMPLE" | "SEQUENTIAL",
+    goalDate: string,
+    expectation: number,
+    priority: "HIGH" | "MEDIUM" | "LOW",
+) {
     return await prisma.todo.create({
         data: {
             completed: false,
             created: new Date(),
-            goalDate: new Date(),
-            priority: PriorityEnum.HIGH,
-            expectation: {
-                startTime: new Date(),
-                endTime: new Date(),
-            },
+            goalDate: new Date(goalDate),
+            priority: PriorityEnum[priority],
+            expectation,
             title,
-            type,
+            type: TodoEnum[type],
             userId,
         },
     });
@@ -25,9 +29,12 @@ async function createTodo(title: string, userId: string, type: TodoEnum) {
 async function createSubTodo(
     title: string,
     userId: string,
-    type: TodoEnum,
+    type: "SECTION" | "SIMPLE" | "SEQUENTIAL",
+    goalDate: string,
+    expectation: number,
+    priority: "HIGH" | "MEDIUM" | "LOW",
     parentId?: string,
-    parentSubTodoId?: string,
+    parentSubTodoId?: string | undefined,
 ) {
     if (parentId) {
         if (parentSubTodoId) {
@@ -35,14 +42,11 @@ async function createSubTodo(
                 data: {
                     completed: false,
                     created: new Date(),
-                    goalDate: new Date(),
+                    goalDate: new Date(goalDate),
+                    priority: PriorityEnum[priority],
+                    expectation,
                     title,
-                    type,
-                    priority: PriorityEnum.HIGH,
-                    expectation: {
-                        startTime: new Date(),
-                        endTime: new Date(),
-                    },
+                    type: TodoEnum[type],
                     userId,
                     todoId: parentId,
                     parentSubTodoId,
@@ -56,14 +60,11 @@ async function createSubTodo(
                 data: {
                     completed: false,
                     created: new Date(),
-                    goalDate: new Date(),
+                    goalDate: new Date(goalDate),
+                    priority: PriorityEnum[priority],
+                    expectation,
                     title,
-                    type,
-                    priority: PriorityEnum.HIGH,
-                    expectation: {
-                        startTime: new Date(),
-                        endTime: new Date(),
-                    },
+                    type: TodoEnum[type],
                     userId,
                     todoId: parentId,
                 },
@@ -77,42 +78,40 @@ async function createSubTodo(
     }
 }
 
-async function createTodoHandler(req: any) {
+/**
+ * Handler function to create a todo.
+ * @param {Request} req - The request object.
+ * @returns {Promise<NextResponse>} The response containing the created todo.
+ */
+async function createTodoHandler(req: Request): Promise<NextResponse> {
     try {
-        const body = await req.json();
-        const { title, userId, type, isSubtodo } = body;
-        let data;
+        const body: {
+            title: string;
+            userId: string;
+            type: "SECTION" | "SIMPLE" | "SEQUENTIAL";
+            isSubtodo: boolean;
+            goalDate: string;
+            priority: "LOW" | "MEDIUM" | "HIGH";
+            expectation: number;
+            parentId?: string;
+            parentSubTodoId?: string;
+        } = await req.json();
 
-        if (isSubtodo) {
-            switch (type) {
-                case TodoEnum.SIMPLE:
-                    data = await createSubTodo(title, userId, type, body.parentId, body.parentSubTodoId);
-                    break;
-                case TodoEnum.SEQUENTIAL:
-                    data = await createSubTodo(title, userId, type, body.parentId, body.parentSubTodoId);
-                    break;
-                case TodoEnum.SECTION:
-                    data = await createSubTodo(title, userId, type, body.parentId, body.parentSubTodoId);
-                    break;
-                default:
-                    data = { error: "Invalid type" };
-                    break;
-            }
+        let data: Todo;
+
+        if (body.isSubtodo) {
+            data = await createSubTodo(
+                body.title,
+                body.userId,
+                body.type,
+                body.goalDate,
+                body.expectation,
+                body.priority,
+                body.parentId,
+                body.parentSubTodoId,
+            );
         } else {
-            switch (type) {
-                case TodoEnum.SIMPLE:
-                    data = await createTodo(title, userId, type);
-                    break;
-                case TodoEnum.SEQUENTIAL:
-                    data = await createTodo(title, userId, type);
-                    break;
-                case TodoEnum.SECTION:
-                    data = await createTodo(title, userId, type);
-                    break;
-                default:
-                    data = { error: "Invalid type" };
-                    break;
-            }
+            data = await createTodo(body.title, body.userId, body.type, body.goalDate, body.expectation, body.priority);
         }
 
         return NextResponse.json(data, { status: 200 });
@@ -124,11 +123,11 @@ async function createTodoHandler(req: any) {
     }
 }
 
-async function getTodosHandler(req: NextApiRequest) {
+async function getTodosHandler(req: NextApiRequest, res: NextApiResponse) {
     try {
         const { searchParams } = new URL(req.url as string);
         const userId = searchParams.get("userId");
-        let todos: Todo[] = await prisma.todo.findMany({
+        let todos = await prisma.todo.findMany({
             where: {
                 userId: String(userId),
             },

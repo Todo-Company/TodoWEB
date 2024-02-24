@@ -34,45 +34,42 @@ export function Dashboard() {
         }
     }, [data, status, toast]);
 
-    const addTodo = () => {
-        fetch("/api/todo", {
-            method: "POST",
-            body: JSON.stringify({
-                isSubtodo: false,
-                title: "New Todo",
-                userId: data?.user?.id,
-                type: TodoEnum.SECTION,
-            }),
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setTodos([...todos, data]);
-            })
-            .catch((error) => {
-                toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: error.message,
-                });
-            });
+    type RequestBody = {
+        isSubtodo: boolean;
+        title: string;
+        userId: string;
+        type: string;
+        goalDate: string;
+        expectation: string;
+        priority: string;
+        parentId?: string;
+        parentSubTodoId?: string;
     };
 
-    const addSubTodo = (props: { parentId?: string; parentSubTodoId?: string }) => () => {
+    const addTodoHandler = (values: any, isSubtodo: boolean, parentId?: string, parentSubTodoId?: string) => {
+        const requestBody: RequestBody = {
+            isSubtodo,
+            title: values.title,
+            userId: data?.user?.id,
+            type: values.type,
+            goalDate: values.goalDate,
+            expectation: values.expectation,
+            priority: values.priority,
+        };
+
+        if (isSubtodo) {
+            requestBody.parentId = parentId;
+            requestBody.parentSubTodoId = parentSubTodoId;
+        }
+
         fetch("/api/todo", {
             method: "POST",
-            body: JSON.stringify({
-                isSubtodo: true,
-                title: "New Sub Todo",
-                userId: data?.user?.id,
-                parentId: props.parentId,
-                parentSubTodoId: props.parentSubTodoId,
-                type: TodoEnum.SECTION,
-            }),
+            body: JSON.stringify(requestBody),
         })
             .then((res) => res.json())
             .then((data) => {
                 const updatedTodos = todos.map((todo) => {
-                    if (todo.id === props.parentId) {
+                    if (todo.id === (isSubtodo ? parentId : undefined)) {
                         return { ...todo, subTodos: [...(todo.subTodos || []), data] };
                     }
                     return todo;
@@ -98,13 +95,13 @@ export function Dashboard() {
                         Add Todo
                     </Button>
                 </DialogTrigger>
-                <AddTodo addSubTodo={addSubTodo} />
+                <AddTodo addTodoHandler={addTodoHandler} isSubtodo={false} />
             </Dialog>
 
             <div className="mt-8 grid">
                 {/* level 0 divide */}
                 {todos.map((todo: any, index) => (
-                    <TodoComponent key={index} todo={todo} addSubTodo={addSubTodo} />
+                    <TodoComponent key={index} todo={todo} addTodoHandler={addTodoHandler} />
                 ))}
             </div>
         </div>
