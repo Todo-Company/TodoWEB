@@ -22,6 +22,12 @@
         --muted: 0 0% 96%;
         --muted-foreground: 0 0% 47%;
 
+        --todo: 0 0% 95%;
+        --todo-foreground: 0 0% 50%;
+
+        --todoFinished: 0 0% 100%;
+        --todoFinished-foreground: 0 0% 85%;
+
         --accent: 0 0% 96%;
         --accent-foreground: 0 0% 11%;
 
@@ -31,6 +37,10 @@
         --border: 0 0% 91.5%;
         --input: 0 0% 91.5%;
         --ring: 0 0% 0%;
+
+        --highPriority: 356 60% 60%;
+        --mediumPriority: 184 72% 49%;
+        --lowPriority: 144 72% 49%;
 
         --radius: 0.5rem;
     }
@@ -54,6 +64,12 @@
         --muted: 0 0% 17.5%;
         --muted-foreground: 0 0% 65%;
 
+        --todo: 0 0% 7%;
+        --todo-foreground: 0 0% 50%;
+
+        --todoFinished: 0 0% 3%;
+        --todoFinished-foreground: 0 0% 17.5%;
+
         --accent: 0 0% 17.5%;
         --accent-foreground: 0 0% 98%;
 
@@ -63,6 +79,10 @@
         --border: 0 0% 17.5%;
         --input: 0 0% 17.5%;
         --ring: 0 0% 100%;
+
+        --highPriority: 356 72% 49%;
+        --mediumPriority: 184 72% 49%;
+        --lowPriority: 144 72% 49%;
     }
 }
 

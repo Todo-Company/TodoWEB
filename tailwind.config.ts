@@ -47,6 +47,20 @@ const config = {
                     DEFAULT: "hsl(var(--card))",
                     foreground: "hsl(var(--card-foreground))",
                 },
+                todo: {
+                    DEFAULT: "hsl(var(--todo))",
+                    foreground: "hsl(var(--todo-foreground))",
+                },
+                todoFinished: {
+                    DEFAULT: "hsl(var(--todoFinished))",
+                    foreground: "hsl(var(--todoFinished-foreground))",
+                },
+
+                priority: {
+                    low: "hsl(var(--lowPriority))",
+                    medium: "hsl(var(--mediumPriority))",
+                    high: "hsl(var(--highPriority))",
+                },
             },
             fontFamily: {
                 serif: "'Satoshi', sans-serif",

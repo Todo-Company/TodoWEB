@@ -2,33 +2,15 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useToast } from "../ui/use-toast";
 import { TodoEnum } from "@prisma/client";
+import { Button } from "@/components/ui/button";
+import { TodoComponent, AddTodo } from "./todo";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 
 export function Dashboard() {
     const [todos, setTodos] = useState([] as any[]);
     const { data, status }: { data: any; status: string } = useSession();
     const { toast } = useToast();
-
-    const RecursiveSubTodosComponent = ({ subTodos, addSubTodo }) => {
-        return (
-            <div>
-                {subTodos.map((subTodo) => (
-                    <div key={subTodo.id}>
-                        <h2>Sub Todo</h2>
-                        <label>
-                            <input type="checkbox" checked={subTodo.completed} />
-                            {subTodo.title}
-                            <button onClick={() => addSubTodo({ parentId: todo.id, parentSubTodoId: subTodo.id })}>
-                                Add Sub Todo
-                            </button>
-                        </label>
-                        {subTodo.subTodos && subTodo.subTodos.length > 0 && (
-                            <RecursiveSubTodosComponent subTodos={subTodo.subTodos} addSubTodo={addSubTodo} />
-                        )}
-                    </div>
-                ))}
-            </div>
-        );
-    };
 
     useEffect(() => {
         if (status === "authenticated") {
@@ -107,26 +89,24 @@ export function Dashboard() {
     };
 
     return (
-        <>
-            <h1>Dashboard</h1>
-            <button onClick={addTodo}>Add Todo</button>
-            <div>
-                {todos.map((todo: any) => (
-                    <div key={todo.id}>
-                        <h1>Todo</h1>
-                        <label>
-                            <input type="checkbox" checked={todo.completed} />
-                            {todo.title}
-                            <button onClick={addSubTodo({ parentId: todo.id })}>Add Sub Todo</button>
-                        </label>
-                        <div>
-                            {todo.subTodos && (
-                                <RecursiveSubTodosComponent subTodos={todo.subTodos} addSubTodo={addSubTodo} />
-                            )}
-                        </div>
-                    </div>
+        <div className="mx-auto grid max-w-[100ch]">
+            <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">Dashboard</h2>
+            <p className="leading-7 text-muted-foreground [&:not(:first-child)]:mt-6">Lets go and create some todos</p>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button variant="outline" className="mt-4">
+                        Add Todo
+                    </Button>
+                </DialogTrigger>
+                <AddTodo addSubTodo={addSubTodo} />
+            </Dialog>
+
+            <div className="mt-8 grid">
+                {/* level 0 divide */}
+                {todos.map((todo: any, index) => (
+                    <TodoComponent key={index} todo={todo} addSubTodo={addSubTodo} />
                 ))}
             </div>
-        </>
+        </div>
     );
 }
