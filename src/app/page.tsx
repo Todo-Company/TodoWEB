@@ -8,7 +8,7 @@ export default function Home() {
     const { data, status } = useSession();
 
     return (
-        <main className="mt-12 [grid-column:_content]">
+        <main className="grid grid-cols-[inherit] [grid-column:_page]">
             {status === "authenticated" ?
                 <Dashboard />
             :   <Homepage />}
