@@ -8,10 +8,14 @@ export default function AddTodoDialog({
     addTodoHandler,
     isSubtodo,
     type,
+    parentId,
+    parentSubTodoId,
 }: {
-    addTodoHandler: (values: any, isSubtodo: boolean) => void;
+    addTodoHandler: (values: any, isSubtodo: boolean, parentId?: string, parentSubTodoId?: string) => void;
     isSubtodo: boolean;
     type: "SIMPLE" | "SECTION" | "SEQUENTIAL";
+    parentId?: string;
+    parentSubTodoId?: string;
 }) {
     return (
         <div
@@ -28,7 +32,12 @@ export default function AddTodoDialog({
                         <Separator />
                     </Button>
                 </DialogTrigger>
-                <AddTodo addTodoHandler={addTodoHandler} isSubtodo={isSubtodo} />
+                <AddTodo
+                    addTodoHandler={addTodoHandler}
+                    isSubtodo={isSubtodo}
+                    parentId={parentId}
+                    parentSubTodoId={parentSubTodoId}
+                />
             </Dialog>
         </div>
     );

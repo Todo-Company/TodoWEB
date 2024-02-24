@@ -3,41 +3,37 @@
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { Todo } from "@/models/Todo";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import AddTodoDialog from "./AddTodoDialog";
+import { Key } from "react";
 
 export function TodoComponent({
     todo,
     addTodoHandler,
-    isSubtodo = false,
 }: {
     todo: any;
-    addTodoHandler: (values: any, isSubtodo: boolean) => void;
-    isSubtodo: boolean;
+    addTodoHandler: (values: any, isSubtodo: boolean, parentId?: string, parentSubTodoId?: string) => void;
 }) {
-    {
-        /* TODO fix types */
+    let parentId = todo.todoId;
+    let subTodoId = todo.id;
+    if (parentId === undefined || parentId === null) {
+        parentId = todo.id;
+        subTodoId = null;
+    } else {
+        parentId = todo.todoId;
     }
+
     return (
         <div
             key={todo.id}
@@ -55,7 +51,6 @@ export function TodoComponent({
                         {todo.title}
                     </h3>
                 </Label>
-
                 <div
                     className={`flex gap-6 [&>*]:flex [&>*]:items-center [&>*]:gap-2 [&>*]:font-medium ${todo.completed ? "text-todoFinished-foreground" : "text-todo-foreground"}`}
                 >
@@ -103,13 +98,20 @@ export function TodoComponent({
                         {todo.expectation} minutes
                     </span>
                 </div>
-
-                <AddTodoDialog addTodoHandler={addTodoHandler} isSubtodo={isSubtodo} type={todo.type} />
+                <AddTodoDialog
+                    addTodoHandler={addTodoHandler}
+                    isSubtodo={true}
+                    type={todo.type}
+                    parentId={parentId}
+                    parentSubTodoId={subTodoId}
+                />
             </div>
 
-            {isSubtodo && todo.subTodos && todo.subTodos.length > 0 && (
+            {todo.subTodos && todo.subTodos.length > 0 && (
                 <div className={`${todo.type === "SECTION" && "m-2 border-[1px] empty:border-0"}`}>
-                    <TodoComponent todo={todo.subTodos} addTodoHandler={addTodoHandler} isSubtodo={true} />
+                    {todo.subTodos.map((subTodo: any) => (
+                        <TodoComponent key={subTodo.id} todo={subTodo} addTodoHandler={addTodoHandler} />
+                    ))}
                 </div>
             )}
         </div>
@@ -119,14 +121,14 @@ export function TodoComponent({
 export function AddTodo({
     addTodoHandler,
     isSubtodo,
+    parentId,
+    parentSubTodoId,
 }: {
-    addTodoHandler: (values: any, isSubtodo: boolean) => void;
+    addTodoHandler: (values: any, isSubtodo: boolean, parentId?: string, parentSubTodoId?: string) => void;
     isSubtodo: boolean;
+    parentId?: string;
+    parentSubTodoId?: string;
 }) {
-    {
-        /* TODO add types */
-    }
-
     const formSchema = z.object({
         title: z.string().min(1, "Title must be provided"),
         priority: z.string().min(1, "Select priority"),
@@ -149,7 +151,7 @@ export function AddTodo({
     });
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        addTodoHandler(values, isSubtodo);
+        addTodoHandler(values, isSubtodo, parentId, parentSubTodoId);
     }
 
     return (
