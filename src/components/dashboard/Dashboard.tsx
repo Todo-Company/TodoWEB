@@ -89,7 +89,7 @@ export function Dashboard() {
     };
 
     return (
-        <div className="mx-auto grid max-w-[100ch]">
+        <div className="mx-auto mt-12 grid max-w-[100ch] [grid-column:_content] ">
             <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">Dashboard</h2>
             <p className="leading-7 text-muted-foreground [&:not(:first-child)]:mt-6">Lets go and create some todos</p>
             <Dialog>

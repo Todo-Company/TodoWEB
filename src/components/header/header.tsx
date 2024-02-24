@@ -30,6 +30,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { BookOpenText } from "lucide-react";
+import SlideIn from "@/components/ui/slideIn";
 
 export default function Header() {
     const [date, setDate] = React.useState<Date>();
@@ -63,7 +64,7 @@ export default function Header() {
 
     return (
         <header className="grid grid-cols-[inherit] border-b border-border py-4 [grid-column:_page]">
-            <div className="flex items-center [grid-column:_content]">
+            <SlideIn className="flex items-center [grid-column:_content]">
                 <Link href={"/"} className="flex items-center gap-4">
                     <svg
                         width="40"
@@ -221,12 +222,11 @@ export default function Header() {
                             </div>
                         </>
                     )}
-
                     <ModeToggle />
 
                     <User />
                 </div>
-            </div>
+            </SlideIn>
         </header>
     );
 }
