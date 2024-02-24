@@ -4,19 +4,23 @@ import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-async function createTodo(title: string, userId: string, type: TodoEnum) {
+async function createTodo(
+    title: string,
+    userId: string,
+    type: "SECTION" | "SIMPLE" | "SEQUENTIAL",
+    goalDate: string,
+    expectation: number,
+    priority: "HIGH" | "MEDIUM" | "LOW",
+) {
     return await prisma.todo.create({
         data: {
             completed: false,
             created: new Date(),
-            goalDate: new Date(),
-            priority: PriorityEnum.HIGH,
-            expectation: {
-                startTime: new Date(),
-                endTime: new Date(),
-            },
+            goalDate: new Date(goalDate),
+            priority: PriorityEnum[priority],
+            expectation,
             title,
-            type,
+            type: TodoEnum[type],
             userId,
         },
     });
@@ -80,7 +84,12 @@ async function createSubTodo(
 async function createTodoHandler(req: any) {
     try {
         const body = await req.json();
-        const { title, userId, type, isSubtodo } = body;
+        const {
+            title,
+            userId,
+            type,
+            isSubtodo,
+        }: { title: string; userId: string; type: "SECTION" | "SIMPLE" | "SEQUENTIAL"; isSubtodo: boolean } = body;
         let data;
 
         if (isSubtodo) {
@@ -101,13 +110,13 @@ async function createTodoHandler(req: any) {
         } else {
             switch (type) {
                 case TodoEnum.SIMPLE:
-                    data = await createTodo(title, userId, type);
+                    data = await createTodo(title, userId, type, body.goalDate, body.expectation, body.priority);
                     break;
                 case TodoEnum.SEQUENTIAL:
-                    data = await createTodo(title, userId, type);
+                    data = await createTodo(title, userId, type, body.goalDate, body.expectation, body.priority);
                     break;
                 case TodoEnum.SECTION:
-                    data = await createTodo(title, userId, type);
+                    data = await createTodo(title, userId, type, body.goalDate, body.expectation, body.priority);
                     break;
                 default:
                     data = { error: "Invalid type" };

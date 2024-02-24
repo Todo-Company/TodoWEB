@@ -15,11 +15,26 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Todo } from "@/models/Todo";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import AddTodoDialog from "./AddTodoDialog";
 
-export function TodoComponent({ todo, addSubTodo }: any) {
+export function TodoComponent({
+    todo,
+    addTodoHandler,
+    isSubtodo = false,
+}: {
+    todo: any;
+    addTodoHandler: (values: any, isSubtodo: boolean) => void;
+    isSubtodo: boolean;
+}) {
     {
         /* TODO fix types */
     }
@@ -33,7 +48,7 @@ export function TodoComponent({ todo, addSubTodo }: any) {
             >
                 <Label className="flex items-center justify-between gap-4">
                     <Checkbox
-                        className="data-[state=checked]:bg-todoFinished-foreground data-[state=checked]:border-todoFinished-foreground transition-colors hover:bg-muted"
+                        className="transition-colors hover:bg-muted data-[state=checked]:border-todoFinished-foreground data-[state=checked]:bg-todoFinished-foreground"
                         defaultChecked={todo.completed}
                     />
                     <h3 className={`w-full scroll-m-20 text-lg leading-7 ${!todo.completed && "text-foreground"}`}>
@@ -57,7 +72,7 @@ export function TodoComponent({ todo, addSubTodo }: any) {
                                 className="stroke-current stroke-2"
                             />
                         </svg>
-                        {todo.created}
+                        {new Date(todo.created).toLocaleDateString()}
                     </span>
                     <span>
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-6">
@@ -74,7 +89,7 @@ export function TodoComponent({ todo, addSubTodo }: any) {
                                 className="stroke-current stroke-2"
                             />
                         </svg>
-                        {todo.goalDate}
+                        {new Date(todo.goalDate).toLocaleDateString()}
                     </span>
                     <span>
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-6">
@@ -85,146 +100,29 @@ export function TodoComponent({ todo, addSubTodo }: any) {
                                 className="stroke-current stroke-2"
                             />
                         </svg>
-                        30 minutes{/* TODO */}
+                        {todo.expectation} minutes
                     </span>
                 </div>
 
-                <div
-                    className={`flex max-h-0 gap-2 overflow-clip transition-all group-hover:max-h-10 [&>*]:flex-1 ${todo.type === "SIMPLE" && "hidden"}`}
-                >
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button
-                                className="text-todo-foreground flex gap-2 decoration-current transition-colors hover:text-foreground"
-                                variant="link"
-                            >
-                                <Separator />
-                                Add Todo
-                                <Separator />
-                            </Button>
-                        </DialogTrigger>
-                        <AddTodo addSubTodo={addSubTodo} />
-                    </Dialog>
-                </div>
+                <AddTodoDialog addTodoHandler={addTodoHandler} isSubtodo={isSubtodo} type={todo.type} />
             </div>
 
-            {todo.subTodos && <RecursiveSubTodosComponent subTodos={todo.subTodos} addSubTodo={addSubTodo} />}
+            {isSubtodo && todo.subTodos && todo.subTodos.length > 0 && (
+                <div className={`${todo.type === "SECTION" && "m-2 border-[1px] empty:border-0"}`}>
+                    <TodoComponent todo={todo.subTodos} addTodoHandler={addTodoHandler} isSubtodo={true} />
+                </div>
+            )}
         </div>
     );
 }
 
-const RecursiveSubTodosComponent = ({ subTodos, addSubTodo }: any) => {
-    {
-        /* TODO fix types */
-    }
-    return (
-        <>
-            {subTodos.map((subTodo) => (
-                <div
-                    key={subTodo.id}
-                    className={`mx-4 grid gap-2 ${subTodo.completed ? "border-todoFinished-foreground" : "border-border"} ${subTodo.type === "SECTION" && "border-[1px]"} `}
-                >
-                    {/* level 2+ divide */}
-                    <div
-                        className={`${subTodo.type === "SECTION" && "bg-todo"} group grid gap-4 border-b ${subTodo.completed && "bg-todoFinished text-todoFinished-foreground"} p-4`}
-                    >
-                        <Label className="flex items-center justify-between gap-4">
-                            <Checkbox
-                                className="data-[state=checked]:bg-todoFinished-foreground data-[state=checked]:border-todoFinished-foreground transition-colors hover:bg-muted"
-                                defaultChecked={subTodo.completed}
-                            />
-                            <h3
-                                className={`w-full scroll-m-20 text-lg leading-7 ${!subTodo.completed && "text-foreground"}`}
-                            >
-                                {subTodo.title}
-                            </h3>
-                        </Label>
-
-                        <div
-                            className={`flex gap-6 [&>*]:flex [&>*]:items-center [&>*]:gap-2 [&>*]:font-medium ${subTodo.completed ? "text-todoFinished-foreground" : "text-todo-foreground"}`}
-                        >
-                            <span>
-                                {getPriorityIcon(subTodo.priority, subTodo.completed)}
-                                {subTodo.priority}
-                            </span>
-                            <span>
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="size-6"
-                                >
-                                    <path
-                                        d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76M12 8v8m-4-4h8"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="stroke-current stroke-2"
-                                    />
-                                </svg>
-                                {subTodo.created}
-                            </span>
-                            <span>
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="size-6"
-                                >
-                                    <path
-                                        d="m12 8 6-3-6-3v10"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="stroke-current stroke-2"
-                                    />
-                                    <path
-                                        d="m8 11.99-5.5 3.14a1 1 0 0 0 0 1.74l8.5 4.86a2 2 0 0 0 2 0l8.5-4.86a1 1 0 0 0 0-1.74L16 12m-9.51.85 11.02 6.3m0-6.3L6.5 19.15"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="stroke-current stroke-2"
-                                    />
-                                </svg>
-                                {subTodo.goalDate}
-                            </span>
-                            <span>
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="size-6"
-                                >
-                                    <path
-                                        d="M10 2h4m-2 12 3-3m-3 11a8 8 0 1 0 0-16 8 8 0 0 0 0 16"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="stroke-current stroke-2"
-                                    />
-                                </svg>
-                                30 minutes{/* TODO */}
-                            </span>
-                        </div>
-
-                        <div className="grid max-h-0 overflow-clip transition-all group-hover:max-h-10">
-                            <Button
-                                variant={"outline"}
-                                onClick={() => addSubTodo({ parentId: todo.id, parentSubTodoId: subTodo.id })}
-                            >
-                                Add Sub Todo
-                            </Button>
-                        </div>
-                    </div>
-
-                    {subTodo.subTodos && subTodo.subTodos.length > 0 && (
-                        <div className={`${subTodo.type === "SECTION" && "m-2 border-[1px] empty:border-0"}`}>
-                            <RecursiveSubTodosComponent subTodos={subTodo.subTodos} addSubTodo={addSubTodo} />
-                        </div>
-                    )}
-                </div>
-            ))}
-        </>
-    );
-};
-
-export function AddTodo(addSubTodo: any) {
+export function AddTodo({
+    addTodoHandler,
+    isSubtodo,
+}: {
+    addTodoHandler: (values: any, isSubtodo: boolean) => void;
+    isSubtodo: boolean;
+}) {
     {
         /* TODO add types */
     }
@@ -233,6 +131,10 @@ export function AddTodo(addSubTodo: any) {
         title: z.string().min(1, "Title must be provided"),
         priority: z.string().min(1, "Select priority"),
         type: z.string().min(1, "Select type"),
+        goalDate: z.date({
+            required_error: "Goal date is required",
+        }),
+        expectation: z.coerce.number().int().gt(0, "Expectation must be greater than 0"),
     });
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -241,12 +143,13 @@ export function AddTodo(addSubTodo: any) {
             title: "",
             priority: "",
             type: "",
+            goalDate: new Date(),
+            expectation: 0,
         },
     });
 
-    // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values);
+        addTodoHandler(values, isSubtodo);
     }
 
     return (
@@ -339,6 +242,53 @@ export function AddTodo(addSubTodo: any) {
                             </FormItem>
                         )}
                     />
+                    <FormField
+                        control={form.control}
+                        name="goalDate"
+                        render={({ field }) => (
+                            <FormItem className="mt-4 flex w-full flex-col">
+                                <FormLabel>Goal Date</FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    " pl-3 text-left font-normal",
+                                                    !field.value && "text-muted-foreground",
+                                                )}
+                                            >
+                                                {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            selected={field.value}
+                                            onSelect={field.onChange}
+                                            disabled={(date) => date < new Date()}
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="expectation"
+                        render={({ field }) => (
+                            <FormItem className="mt-4">
+                                <FormLabel>Expectation</FormLabel>
+                                <FormControl>
+                                    <Input type="number" onChange={field.onChange} value={field.value} />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+
                     <Button className="mt-6" type="submit">
                         Submit
                     </Button>

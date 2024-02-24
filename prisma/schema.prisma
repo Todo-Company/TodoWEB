@@ -53,7 +53,7 @@ model Todo {
   title       String
   type        TodoEnum
   priority    PriorityEnum
-  expectation TimeRange
+  expectation Int
   userId      String       @db.ObjectId
   subTodos    SubTodo[]
 }
@@ -66,7 +66,7 @@ model SubTodo {
   title           String
   type            TodoEnum
   priority        PriorityEnum
-  expectation     TimeRange
+  expectation     Int
   todoId          String       @db.ObjectId
   todo            Todo         @relation(fields: [todoId], references: [id])
   userId          String       @db.ObjectId

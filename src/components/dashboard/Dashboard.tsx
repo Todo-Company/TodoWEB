@@ -34,14 +34,25 @@ export function Dashboard() {
         }
     }, [data, status, toast]);
 
-    const addTodo = () => {
+    const addTodoHandler = (values: any, isSubtodo: boolean) => {
+        if (isSubtodo) {
+            addSubTodo(values);
+        } else {
+            addTodo(values);
+        }
+    };
+
+    const addTodo = (values: any) => {
         fetch("/api/todo", {
             method: "POST",
             body: JSON.stringify({
                 isSubtodo: false,
-                title: "New Todo",
+                title: values.title,
                 userId: data?.user?.id,
-                type: TodoEnum.SECTION,
+                type: values.type,
+                goalDate: values.goalDate,
+                expectation: values.expectation,
+                priority: values.priority,
             }),
         })
             .then((res) => res.json())
@@ -98,13 +109,13 @@ export function Dashboard() {
                         Add Todo
                     </Button>
                 </DialogTrigger>
-                <AddTodo addSubTodo={addSubTodo} />
+                <AddTodo addTodoHandler={addTodoHandler} isSubtodo={false} />
             </Dialog>
 
             <div className="mt-8 grid">
                 {/* level 0 divide */}
                 {todos.map((todo: any, index) => (
-                    <TodoComponent key={index} todo={todo} addSubTodo={addSubTodo} />
+                    <TodoComponent key={index} todo={todo} addTodoHandler={addTodoHandler} isSubtodo={true} />
                 ))}
             </div>
         </div>
