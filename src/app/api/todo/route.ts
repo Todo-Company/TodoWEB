@@ -165,4 +165,79 @@ async function getTodosHandler(req: NextApiRequest, res: NextApiResponse) {
     }
 }
 
-export { createTodoHandler as POST, getTodosHandler as GET };
+export async function updateTodoHandler(req: Request) {
+    try {
+        let isSubtodo = false;
+        const body: {
+            id: string;
+            completed: boolean;
+        } = await req.json();
+        console.log(body);
+
+        if (!body.id) {
+            console.log("Missing todoId");
+            return NextResponse.json({ error: "Missing todoId" }, { status: 400 });
+        }
+
+        let todo = await prisma.todo.findFirst({
+            where: {
+                id: String(body.id),
+            },
+        });
+
+        if (!todo) {
+            console.log("Todo not found trying to find subtodo");
+            todo = await prisma.subTodo.findFirst({
+                where: {
+                    id: String(body.id),
+                },
+            });
+
+            if (!todo) {
+                console.log("Subtodo not found");
+                return NextResponse.json({ error: "Subtodo not found" }, { status: 404 });
+            }
+
+            isSubtodo = true;
+        }
+
+        if (!todo) {
+            console.log("Todo not found");
+            return NextResponse.json({ error: "Todo not found" }, { status: 404 });
+        }
+
+        if (!todo.completed && !body.completed) {
+            console.log("There was a mismatch between completed status");
+            return NextResponse.json({ error: "There was a mismatch between completed status" }, { status: 500 });
+        }
+
+        let updatedTodo;
+
+        if (isSubtodo) {
+            updatedTodo = await prisma.subTodo.update({
+                where: {
+                    id: String(body.id),
+                },
+                data: {
+                    completed: body.completed,
+                },
+            });
+        } else {
+            updatedTodo = await prisma.todo.update({
+                where: {
+                    id: String(body.id),
+                },
+                data: {
+                    completed: body.completed,
+                },
+            });
+        }
+
+        return NextResponse.json(updatedTodo, { status: 200 });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+    }
+}
+
+export { createTodoHandler as POST, getTodosHandler as GET, updateTodoHandler as PUT };

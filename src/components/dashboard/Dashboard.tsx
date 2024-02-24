@@ -85,6 +85,17 @@ export function Dashboard() {
             });
     };
 
+    const updateCheckbox = (id: string, completed: boolean) => {
+        console.log("updateCheckbox", id, completed);
+
+        fetch("/api/todo", {
+            method: "PUT",
+            body: JSON.stringify({ id, completed }),
+        }).then((res) => {
+            console.log(res);
+        });
+    };
+
     return (
         <div className="mx-auto mt-12 grid max-w-[100ch] [grid-column:_content] ">
             <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">Dashboard</h2>
@@ -101,7 +112,12 @@ export function Dashboard() {
             <div className="mt-8 grid">
                 {/* level 0 divide */}
                 {todos.map((todo: any, index) => (
-                    <TodoComponent key={index} todo={todo} addTodoHandler={addTodoHandler} />
+                    <TodoComponent
+                        key={index}
+                        todo={todo}
+                        addTodoHandler={addTodoHandler}
+                        updateCheckbox={updateCheckbox}
+                    />
                 ))}
             </div>
         </div>

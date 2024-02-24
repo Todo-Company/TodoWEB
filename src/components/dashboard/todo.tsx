@@ -16,14 +16,16 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import AddTodoDialog from "./AddTodoDialog";
-import { Key } from "react";
+import { useState } from "react";
 
 export function TodoComponent({
     todo,
     addTodoHandler,
+    updateCheckbox,
 }: {
     todo: any;
     addTodoHandler: (values: any, isSubtodo: boolean, parentId?: string, parentSubTodoId?: string) => void;
+    updateCheckbox: (id: string, completed: boolean) => void;
 }) {
     let parentId = todo.todoId;
     let subTodoId = todo.id;
@@ -46,6 +48,9 @@ export function TodoComponent({
                     <Checkbox
                         className="transition-colors hover:bg-muted data-[state=checked]:border-todoFinished-foreground data-[state=checked]:bg-todoFinished-foreground"
                         defaultChecked={todo.completed}
+                        onCheckedChange={() => {
+                            updateCheckbox(todo.id, !todo.completed);
+                        }}
                     />
                     <h3 className={`w-full scroll-m-20 text-lg leading-7 ${!todo.completed && "text-foreground"}`}>
                         {todo.title}
@@ -110,7 +115,12 @@ export function TodoComponent({
             {todo.subTodos && todo.subTodos.length > 0 && (
                 <div className={`${todo.type === "SECTION" && "m-2 border-[1px] empty:border-0"}`}>
                     {todo.subTodos.map((subTodo: any) => (
-                        <TodoComponent key={subTodo.id} todo={subTodo} addTodoHandler={addTodoHandler} />
+                        <TodoComponent
+                            key={subTodo.id}
+                            todo={subTodo}
+                            addTodoHandler={addTodoHandler}
+                            updateCheckbox={updateCheckbox}
+                        />
                     ))}
                 </div>
             )}
