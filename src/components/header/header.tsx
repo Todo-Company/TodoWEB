@@ -222,7 +222,6 @@ export default function Header() {
                             </div>
                         </>
                     )}
-
                     <ModeToggle />
 
                     <User />
