@@ -3,7 +3,7 @@ import "../styles/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Provider from "../../context/provider";
 import Header from "@/components/header/header";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
     title: "Create Next App",

@@ -9,13 +9,14 @@ import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function LoginPage() {
     const router = useRouter();
     const { theme } = useTheme();
+    const { toast } = useToast();
 
     useEffect(() => {
         async function getLoader() {
@@ -47,9 +48,15 @@ export default function LoginPage() {
 
         if (res && res.ok) {
             router.push("/");
-            toast("Successfully logged in");
+            toast({
+                variant: "default",
+                description: "Successfully logged in",
+            });
         } else {
-            toast("Something went wrong, please try again.");
+            toast({
+                variant: "destructive",
+                description: "Something went wrong, please try again.",
+            });
         }
     }
 
