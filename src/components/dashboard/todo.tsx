@@ -74,21 +74,11 @@ export function TodoComponent({
                         )}
                     >
                         {todo.title}
-                        <Button
-                            variant="link"
-                            onClick={() => deleteTodoHandler(todo.id, todo.todoId)}
-                            className={cn(
-                                "ml-8 size-fit p-0 hover:text-destructive",
-                                isCompleted ? "text-todoFinished-foreground" : "text-muted-foreground",
-                            )}
-                        >
-                            <Trash2 className="size-4" />
-                        </Button>
                     </h3>
                 </Label>
                 <div
                     className={cn(
-                        "flex flex-wrap gap-x-6 gap-y-3 [&>*]:flex [&>*]:items-center [&>*]:gap-2 [&>*]:max-sm:text-base [&>*]:sm:font-medium",
+                        "flex flex-wrap gap-x-6 gap-y-3 *:flex *:items-center *:gap-2 *:max-sm:text-base *:sm:font-medium",
                         isCompleted ? "text-todoFinished-foreground" : "text-todo-foreground",
                     )}
                 >
@@ -150,6 +140,18 @@ export function TodoComponent({
                         </svg>
                         {todo.expectation} minutes
                     </span>
+
+                    <Button
+                        variant="link"
+                        onClick={() => deleteTodoHandler(todo.id, todo.todoId)}
+                        className={cn(
+                            "size-fit p-0 hover:text-destructive lg:ml-auto",
+                            isCompleted ? "text-todoFinished-foreground" : "text-todo-foreground",
+                        )}
+                    >
+                        <Trash2 className="size-4" />
+                        <span className="lg:hidden">Remove</span>
+                    </Button>
                 </div>
 
                 <AddTodoDialog
