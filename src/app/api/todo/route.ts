@@ -172,10 +172,8 @@ export async function updateTodoHandler(req: Request) {
             id: string;
             completed: boolean;
         } = await req.json();
-        console.log(body);
 
         if (!body.id) {
-            console.log("Missing todoId");
             return NextResponse.json({ error: "Missing todoId" }, { status: 400 });
         }
 
@@ -186,7 +184,6 @@ export async function updateTodoHandler(req: Request) {
         });
 
         if (!todo) {
-            console.log("Todo not found trying to find subtodo");
             todo = await prisma.subTodo.findFirst({
                 where: {
                     id: String(body.id),
@@ -194,7 +191,6 @@ export async function updateTodoHandler(req: Request) {
             });
 
             if (!todo) {
-                console.log("Subtodo not found");
                 return NextResponse.json({ error: "Subtodo not found" }, { status: 404 });
             }
 
@@ -202,12 +198,10 @@ export async function updateTodoHandler(req: Request) {
         }
 
         if (!todo) {
-            console.log("Todo not found");
             return NextResponse.json({ error: "Todo not found" }, { status: 404 });
         }
 
         if (!todo.completed && !body.completed) {
-            console.log("There was a mismatch between completed status");
             return NextResponse.json({ error: "There was a mismatch between completed status" }, { status: 500 });
         }
 

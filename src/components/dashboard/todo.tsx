@@ -27,6 +27,8 @@ export function TodoComponent({
     addTodoHandler: (values: any, isSubtodo: boolean, parentId?: string, parentSubTodoId?: string) => void;
     updateCheckbox: (id: string, completed: boolean) => void;
 }) {
+    const [isCompleted, setIsCompleted] = useState(todo.completed);
+
     let parentId = todo.todoId;
     let subTodoId = todo.id;
     if (parentId === undefined || parentId === null) {
@@ -39,28 +41,29 @@ export function TodoComponent({
     return (
         <div
             key={todo.id}
-            className={`grid gap-4 pb-4 ${todo.subTodos && "mx-4"} ${todo.completed ? "border-todoFinished-foreground" : "border-border"} ${todo.type === "SECTION" && "border-[1px]"} `}
+            className={`grid gap-4 pb-4 ${todo.subTodos && "mx-4"} ${isCompleted ? "border-todoFinished-foreground" : "border-border"} ${todo.type === "SECTION" && "border-[1px]"} `}
         >
             <div
-                className={`${todo.type === "SECTION" && "bg-todo"} group grid gap-4 border-b ${todo.completed && "bg-todoFinished text-todoFinished-foreground"} px-4 py-6`}
+                className={`${todo.type === "SECTION" && "bg-todo"} group grid gap-4 border-b ${isCompleted && "bg-todoFinished text-todoFinished-foreground"} px-4 py-6`}
             >
                 <Label className="flex items-center justify-between gap-4">
                     <Checkbox
                         className="transition-colors hover:bg-muted data-[state=checked]:border-todoFinished-foreground data-[state=checked]:bg-todoFinished-foreground"
-                        defaultChecked={todo.completed}
+                        defaultChecked={isCompleted}
                         onCheckedChange={() => {
-                            updateCheckbox(todo.id, !todo.completed);
+                            updateCheckbox(todo.id, !isCompleted);
+                            setIsCompleted(!isCompleted);
                         }}
                     />
-                    <h3 className={`w-full scroll-m-20 text-lg leading-7 ${!todo.completed && "text-foreground"}`}>
+                    <h3 className={`w-full scroll-m-20 text-lg leading-7 ${!isCompleted && "text-foreground"}`}>
                         {todo.title}
                     </h3>
                 </Label>
                 <div
-                    className={`flex gap-6 [&>*]:flex [&>*]:items-center [&>*]:gap-2 [&>*]:font-medium ${todo.completed ? "text-todoFinished-foreground" : "text-todo-foreground"}`}
+                    className={`flex gap-6 [&>*]:flex [&>*]:items-center [&>*]:gap-2 [&>*]:font-medium ${isCompleted ? "text-todoFinished-foreground" : "text-todo-foreground"}`}
                 >
                     <span>
-                        {getPriorityIcon(todo.priority, todo.completed)}
+                        {getPriorityIcon(todo.priority, isCompleted)}
                         {todo.priority}
                     </span>
                     <span>
