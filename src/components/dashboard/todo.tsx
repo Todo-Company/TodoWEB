@@ -8,12 +8,12 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "@/components/ui/select";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import AddTodoDialog from "./AddTodoDialog";
 import { useState } from "react";
@@ -44,10 +44,19 @@ export function TodoComponent({
     return (
         <SlideIn
             key={todo.id}
-            className={`grid ${todo.subTodos ? "mx-4" : ""} ${isCompleted ? "border-todoFinished-foreground" : "border-border"} ${todo.type === "SECTION" ? "mt-4 border-[1px] pb-4 " : ""} `}
+            className={cn(
+                "grid ",
+                todo.subTodos && "mx-4",
+                isCompleted ? "border-todoFinished-foreground" : "border-border",
+                todo.type === "SECTION" && "mt-4 border-[1px] pb-4",
+            )}
         >
             <div
-                className={`${todo.type === "SECTION" ? "bg-todo" : ""} group grid gap-4 border-b ${isCompleted ? "bg-todoFinished text-todoFinished-foreground" : ""} px-2 py-6 lg:px-4`}
+                className={cn(
+                    "group grid gap-4 border-b px-2 py-6 lg:px-4",
+                    todo.type === "SECTION" && "bg-todo",
+                    isCompleted && "bg-todoFinished text-todoFinished-foreground",
+                )}
             >
                 <Label className="flex justify-between gap-4">
                     <Checkbox
@@ -59,13 +68,29 @@ export function TodoComponent({
                         }}
                     />
                     <h3
-                        className={`w-full scroll-m-20 text-justify text-base leading-6 sm:text-lg sm:leading-7 ${!isCompleted ? "text-foreground" : ""}`}
+                        className={cn(
+                            "w-full scroll-m-20 text-justify text-base leading-6 sm:text-lg sm:leading-7",
+                            !isCompleted && "text-foreground",
+                        )}
                     >
                         {todo.title}
+                        <Button
+                            variant="link"
+                            onClick={() => deleteTodoHandler(todo.id, todo.todoId)}
+                            className={cn(
+                                "ml-8 size-fit p-0 hover:text-destructive",
+                                isCompleted ? "text-todoFinished-foreground" : "text-muted-foreground",
+                            )}
+                        >
+                            <Trash2 className="size-4" />
+                        </Button>
                     </h3>
                 </Label>
                 <div
-                    className={`flex flex-wrap gap-x-6 gap-y-3 [&>*]:flex [&>*]:items-center [&>*]:gap-2 [&>*]:max-sm:text-base [&>*]:sm:font-medium ${isCompleted ? "text-todoFinished-foreground" : "text-todo-foreground"}`}
+                    className={cn(
+                        "flex flex-wrap gap-x-6 gap-y-3 [&>*]:flex [&>*]:items-center [&>*]:gap-2 [&>*]:max-sm:text-base [&>*]:sm:font-medium",
+                        isCompleted ? "text-todoFinished-foreground" : "text-todo-foreground",
+                    )}
                 >
                     <span>
                         {getPriorityIcon(todo.priority, isCompleted)}
@@ -126,9 +151,6 @@ export function TodoComponent({
                         {todo.expectation} minutes
                     </span>
                 </div>
-                <Button variant="ghost" onClick={() => deleteTodoHandler(todo.id, todo.todoId)}>
-                    Delete
-                </Button>
 
                 <AddTodoDialog
                     addTodoHandler={addTodoHandler}
@@ -292,7 +314,7 @@ export function AddTodo({
                                             <Button
                                                 variant={"outline"}
                                                 className={cn(
-                                                    " pl-3 text-left font-normal",
+                                                    "pl-3 text-left font-normal",
                                                     !field.value && "text-muted-foreground",
                                                 )}
                                             >
@@ -350,7 +372,7 @@ function getPriorityIcon(priority: string, completed: boolean) {
                         d="M11.473 10.158a1.75 1.75 0 0 0-1.452 0L2.522 13.57a.875.875 0 0 0 0 1.602l7.508 3.42a1.75 1.75 0 0 0 1.452 0l7.508-3.412a.875.875 0 0 0 0-1.6z"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className={`stroke-2 ${completed ? "stroke-todoFinished-foreground" : "stroke-priority-low"}`}
+                        className={cn("stroke-2", completed ? "stroke-todoFinished-foreground" : "stroke-priority-low")}
                     />
                 </svg>
             );
@@ -361,13 +383,19 @@ function getPriorityIcon(priority: string, completed: boolean) {
                         d="M11.473 6.158a1.75 1.75 0 0 0-1.452 0L2.522 9.57a.875.875 0 0 0 0 1.602l7.508 3.42a1.75 1.75 0 0 0 1.452 0l7.508-3.412a.875.875 0 0 0 0-1.6z"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className={`stroke-2 ${completed ? "stroke-todoFinished-foreground" : "stroke-priority-medium"}`}
+                        className={cn(
+                            "stroke-2",
+                            completed ? "stroke-todoFinished-foreground" : "stroke-priority-medium",
+                        )}
                     />
                     <path
                         d="m5.32 12.688-3.063 1.4a.875.875 0 0 0 0 1.583l7.525 3.422a1.75 1.75 0 0 0 1.444 0l7.508-3.413a.876.876 0 0 0 0-1.601l-3.063-1.392"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className={`stroke-2 ${completed ? "stroke-todoFinished-foreground" : "stroke-priority-medium"}`}
+                        className={cn(
+                            "stroke-2",
+                            completed ? "stroke-todoFinished-foreground" : "stroke-priority-medium",
+                        )}
                     />
                 </svg>
             );
@@ -378,7 +406,10 @@ function getPriorityIcon(priority: string, completed: boolean) {
                         clipPath="url(#a)"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className={`stroke-2 ${completed ? "stroke-todoFinished-foreground" : "stroke-priority-high"}`}
+                        className={cn(
+                            "stroke-2",
+                            completed ? "stroke-todoFinished-foreground" : "stroke-priority-high",
+                        )}
                     >
                         <path d="M11.226 1.907a1.75 1.75 0 0 0-1.452 0l-7.5 3.413a.875.875 0 0 0 0 1.601l7.508 3.421a1.75 1.75 0 0 0 1.453 0l7.507-3.412a.875.875 0 0 0 0-1.601z" />
                         <path d="m5.32 8.313-3.063 1.4a.875.875 0 0 0 0 1.583l7.525 3.422a1.75 1.75 0 0 0 1.444 0l7.508-3.413a.876.876 0 0 0 0-1.601L15.67 8.312" />

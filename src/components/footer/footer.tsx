@@ -9,7 +9,7 @@ export default function FooterComponent() {
         <SlideIn className="[grid-column:content]">
             <footer className="mt-24 min-h-[30svh]">
                 <Separator />
-                <div className="mt-12 px-8">
+                <div className="my-12 px-8">
                     <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">Thank you for using our app.</h2>
                     <p className="leading-7 text-muted-foreground [&:not(:first-child)]:mt-6">
                         Consider donating or following to keep software free.
