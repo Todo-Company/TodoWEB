@@ -12,7 +12,7 @@ async function createTodo(
     expectation: number,
     priority: "HIGH" | "MEDIUM" | "LOW",
 ) {
-    return await prisma.todo.create({
+    const todo = await prisma.todo.create({
         data: {
             completed: false,
             created: new Date(),
@@ -24,6 +24,10 @@ async function createTodo(
             userId,
         },
     });
+
+    await prisma.$disconnect();
+
+    return todo;
 }
 
 async function createSubTodo(
@@ -38,7 +42,7 @@ async function createSubTodo(
 ) {
     if (parentId) {
         if (parentSubTodoId) {
-            return await prisma.subTodo.create({
+            const subTodo = await prisma.subTodo.create({
                 data: {
                     completed: false,
                     created: new Date(),
@@ -55,8 +59,12 @@ async function createSubTodo(
                     subTodos: true,
                 },
             });
+
+            await prisma.$disconnect();
+
+            return subTodo;
         } else {
-            return await prisma.subTodo.create({
+            const subTodo = await prisma.subTodo.create({
                 data: {
                     completed: false,
                     created: new Date(),
@@ -72,8 +80,12 @@ async function createSubTodo(
                     subTodos: true,
                 },
             });
+
+            await prisma.$disconnect();
+            return subTodo;
         }
     } else {
+        await prisma.$disconnect();
         throw new Error("Parent ID must be provided to create a subtodo.");
     }
 }
@@ -231,6 +243,8 @@ export async function updateTodoHandler(req: Request) {
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+    } finally {
+        await prisma.$disconnect();
     }
 }
 
