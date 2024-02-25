@@ -12,7 +12,7 @@ async function createTodo(
     expectation: number,
     priority: "HIGH" | "MEDIUM" | "LOW",
 ) {
-    return await prisma.todo.create({
+    const todo = await prisma.todo.create({
         data: {
             completed: false,
             created: new Date(),
@@ -24,6 +24,10 @@ async function createTodo(
             userId,
         },
     });
+
+    await prisma.$disconnect();
+
+    return todo;
 }
 
 async function createSubTodo(
@@ -38,7 +42,7 @@ async function createSubTodo(
 ) {
     if (parentId) {
         if (parentSubTodoId) {
-            return await prisma.subTodo.create({
+            const subTodo = await prisma.subTodo.create({
                 data: {
                     completed: false,
                     created: new Date(),
@@ -55,8 +59,12 @@ async function createSubTodo(
                     subTodos: true,
                 },
             });
+
+            await prisma.$disconnect();
+
+            return subTodo;
         } else {
-            return await prisma.subTodo.create({
+            const subTodo = await prisma.subTodo.create({
                 data: {
                     completed: false,
                     created: new Date(),
@@ -72,8 +80,12 @@ async function createSubTodo(
                     subTodos: true,
                 },
             });
+
+            await prisma.$disconnect();
+            return subTodo;
         }
     } else {
+        await prisma.$disconnect();
         throw new Error("Parent ID must be provided to create a subtodo.");
     }
 }
@@ -165,4 +177,75 @@ async function getTodosHandler(req: NextApiRequest, res: NextApiResponse) {
     }
 }
 
-export { createTodoHandler as POST, getTodosHandler as GET };
+export async function updateTodoHandler(req: Request) {
+    try {
+        let isSubtodo = false;
+        const body: {
+            id: string;
+            completed: boolean;
+        } = await req.json();
+
+        if (!body.id) {
+            return NextResponse.json({ error: "Missing todoId" }, { status: 400 });
+        }
+
+        let todo = await prisma.todo.findFirst({
+            where: {
+                id: String(body.id),
+            },
+        });
+
+        if (!todo) {
+            todo = await prisma.subTodo.findFirst({
+                where: {
+                    id: String(body.id),
+                },
+            });
+
+            if (!todo) {
+                return NextResponse.json({ error: "Subtodo not found" }, { status: 404 });
+            }
+
+            isSubtodo = true;
+        }
+
+        if (!todo) {
+            return NextResponse.json({ error: "Todo not found" }, { status: 404 });
+        }
+
+        if (!todo.completed && !body.completed) {
+            return NextResponse.json({ error: "There was a mismatch between completed status" }, { status: 500 });
+        }
+
+        let updatedTodo;
+
+        if (isSubtodo) {
+            updatedTodo = await prisma.subTodo.update({
+                where: {
+                    id: String(body.id),
+                },
+                data: {
+                    completed: body.completed,
+                },
+            });
+        } else {
+            updatedTodo = await prisma.todo.update({
+                where: {
+                    id: String(body.id),
+                },
+                data: {
+                    completed: body.completed,
+                },
+            });
+        }
+
+        return NextResponse.json(updatedTodo, { status: 200 });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+    } finally {
+        await prisma.$disconnect();
+    }
+}
+
+export { createTodoHandler as POST, getTodosHandler as GET, updateTodoHandler as PUT };
