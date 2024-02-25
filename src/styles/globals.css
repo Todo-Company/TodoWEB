@@ -96,4 +96,19 @@
     ::selection {
         @apply bg-foreground text-background;
     }
+    ::-webkit-scrollbar {
+        @apply size-[5px];
+    }
+    ::-webkit-scrollbar-button {
+        @apply size-1 bg-muted;
+    }
+    ::-webkit-scrollbar-thumb {
+        @apply rounded-full border-none bg-muted-foreground active:bg-foreground;
+    }
+    ::-webkit-scrollbar-track {
+        @apply border-none bg-muted active:bg-background;
+    }
+    ::-webkit-scrollbar-corner {
+        @apply bg-transparent;
+    }
 }

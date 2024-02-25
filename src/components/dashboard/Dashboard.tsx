@@ -1,11 +1,10 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { TodoEnum } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { TodoComponent, AddTodo } from "./todo";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
+import SlideIn from "@/components/ui/slideIn";
 
 export function Dashboard() {
     const [todos, setTodos] = useState([] as any[]);
@@ -117,17 +116,21 @@ export function Dashboard() {
     };
 
     return (
-        <div className="mx-auto mt-12 grid max-w-[100ch] [grid-column:_content] ">
-            <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">Dashboard</h2>
-            <p className="leading-7 text-muted-foreground [&:not(:first-child)]:mt-6">Lets go and create some todos</p>
-            <Dialog>
-                <DialogTrigger asChild>
-                    <Button variant="outline" className="mt-4">
-                        Add Todo
-                    </Button>
-                </DialogTrigger>
-                <AddTodo addTodoHandler={addTodoHandler} isSubtodo={false} />
-            </Dialog>
+        <div className="mx-auto mt-12 grid w-full max-w-[100ch] [grid-column:_content]">
+            <SlideIn>
+                <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">Dashboard</h2>
+                <p className="leading-7 text-muted-foreground [&:not(:first-child)]:mt-6">
+                    Lets go and create some todos
+                </p>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant="outline" className="mt-4">
+                            Add Todo
+                        </Button>
+                    </DialogTrigger>
+                    <AddTodo addTodoHandler={addTodoHandler} isSubtodo={false} />
+                </Dialog>
+            </SlideIn>
 
             <div className="mt-8 grid">
                 {/* level 0 divide */}

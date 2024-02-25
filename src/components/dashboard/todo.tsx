@@ -17,6 +17,7 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import AddTodoDialog from "./AddTodoDialog";
 import { useState } from "react";
+import SlideIn from "@/components/ui/slideIn";
 
 export function TodoComponent({
     todo,
@@ -41,35 +42,42 @@ export function TodoComponent({
     }
 
     return (
-        <div
+        <SlideIn
             key={todo.id}
-            className={`grid gap-4 pb-4 ${todo.subTodos && "mx-4"} ${isCompleted ? "border-todoFinished-foreground" : "border-border"} ${todo.type === "SECTION" && "border-[1px]"} `}
+            className={`grid ${todo.subTodos ? "mx-4" : ""} ${isCompleted ? "border-todoFinished-foreground" : "border-border"} ${todo.type === "SECTION" ? "mt-4 border-[1px] pb-4 " : ""} `}
         >
             <div
-                className={`${todo.type === "SECTION" && "bg-todo"} group grid gap-4 border-b ${isCompleted && "bg-todoFinished text-todoFinished-foreground"} px-4 py-6`}
+                className={`${todo.type === "SECTION" ? "bg-todo" : ""} group grid gap-4 border-b ${isCompleted ? "bg-todoFinished text-todoFinished-foreground" : ""} px-2 py-6 lg:px-4`}
             >
-                <Label className="flex items-center justify-between gap-4">
+                <Label className="flex justify-between gap-4">
                     <Checkbox
-                        className="transition-colors hover:bg-muted data-[state=checked]:border-todoFinished-foreground data-[state=checked]:bg-todoFinished-foreground"
+                        className="mt-2 transition-colors hover:bg-muted data-[state=checked]:border-todoFinished-foreground data-[state=checked]:bg-todoFinished-foreground"
                         defaultChecked={isCompleted}
                         onCheckedChange={() => {
                             updateCheckbox(todo.id, !isCompleted);
                             setIsCompleted(!isCompleted);
                         }}
                     />
-                    <h3 className={`w-full scroll-m-20 text-lg leading-7 ${!isCompleted && "text-foreground"}`}>
+                    <h3
+                        className={`w-full scroll-m-20 text-justify text-base leading-6 sm:text-lg sm:leading-7 ${!isCompleted ? "text-foreground" : ""}`}
+                    >
                         {todo.title}
                     </h3>
                 </Label>
                 <div
-                    className={`flex gap-6 [&>*]:flex [&>*]:items-center [&>*]:gap-2 [&>*]:font-medium ${isCompleted ? "text-todoFinished-foreground" : "text-todo-foreground"}`}
+                    className={`flex flex-wrap gap-x-6 gap-y-3 [&>*]:flex [&>*]:items-center [&>*]:gap-2 [&>*]:max-sm:text-base [&>*]:sm:font-medium ${isCompleted ? "text-todoFinished-foreground" : "text-todo-foreground"}`}
                 >
                     <span>
                         {getPriorityIcon(todo.priority, isCompleted)}
                         {todo.priority}
                     </span>
                     <span>
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-6">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="size-5 sm:size-6"
+                        >
                             <path
                                 d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76M12 8v8m-4-4h8"
                                 strokeLinecap="round"
@@ -80,7 +88,12 @@ export function TodoComponent({
                         {new Date(todo.created).toLocaleDateString()}
                     </span>
                     <span>
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-6">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="size-5 sm:size-6"
+                        >
                             <path
                                 d="m12 8 6-3-6-3v10"
                                 strokeLinecap="round"
@@ -97,7 +110,12 @@ export function TodoComponent({
                         {new Date(todo.goalDate).toLocaleDateString()}
                     </span>
                     <span>
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-6">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="size-5 sm:size-6"
+                        >
                             <path
                                 d="M10 2h4m-2 12 3-3m-3 11a8 8 0 1 0 0-16 8 8 0 0 0 0 16"
                                 strokeLinecap="round"
@@ -121,20 +139,18 @@ export function TodoComponent({
                 />
             </div>
 
-            {todo.subTodos && todo.subTodos.length > 0 && (
-                <div className={`${todo.type === "SECTION" && "m-2 border-[1px] empty:border-0"}`}>
-                    {todo.subTodos.map((subTodo: any) => (
-                        <TodoComponent
-                            key={subTodo.id}
-                            todo={subTodo}
-                            addTodoHandler={addTodoHandler}
-                            updateCheckbox={updateCheckbox}
-                            deleteTodoHandler={deleteTodoHandler}
-                        />
-                    ))}
-                </div>
-            )}
-        </div>
+            {todo.subTodos &&
+                todo.subTodos.length > 0 &&
+                todo.subTodos.map((subTodo: any) => (
+                    <TodoComponent
+                        key={subTodo.id}
+                        todo={subTodo}
+                        addTodoHandler={addTodoHandler}
+                        updateCheckbox={updateCheckbox}
+                        deleteTodoHandler={deleteTodoHandler}
+                    />
+                ))}
+        </SlideIn>
     );
 }
 
@@ -166,7 +182,7 @@ export function AddTodo({
             priority: "",
             type: "",
             goalDate: new Date(),
-            expectation: 0,
+            expectation: undefined,
         },
     });
 
@@ -233,7 +249,7 @@ export function AddTodo({
 
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl className="!mt-0">
-                                        <SelectTrigger className="">
+                                        <SelectTrigger>
                                             <SelectValue placeholder="Priority" />
                                         </SelectTrigger>
                                     </FormControl>
@@ -272,7 +288,7 @@ export function AddTodo({
                                 <FormLabel>Goal Date</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
-                                        <FormControl>
+                                        <FormControl className="!mt-1">
                                             <Button
                                                 variant={"outline"}
                                                 className={cn(
@@ -304,8 +320,13 @@ export function AddTodo({
                         render={({ field }) => (
                             <FormItem className="mt-4">
                                 <FormLabel>Expectation</FormLabel>
-                                <FormControl>
-                                    <Input type="number" onChange={field.onChange} value={field.value} />
+                                <FormControl className="!mt-0">
+                                    <Input
+                                        type="number"
+                                        placeholder="Minutes"
+                                        onChange={field.onChange}
+                                        value={field.value}
+                                    />
                                 </FormControl>
                             </FormItem>
                         )}
@@ -354,9 +375,7 @@ function getPriorityIcon(priority: string, completed: boolean) {
             return (
                 <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g
-                        clip-path="url(#a)"
-                        stroke="#D9232F"
-                        stroke-width="2"
+                        clipPath="url(#a)"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         className={`stroke-2 ${completed ? "stroke-todoFinished-foreground" : "stroke-priority-high"}`}
