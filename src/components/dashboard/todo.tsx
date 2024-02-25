@@ -22,10 +22,12 @@ export function TodoComponent({
     todo,
     addTodoHandler,
     updateCheckbox,
+    deleteTodoHandler,
 }: {
     todo: any;
     addTodoHandler: (values: any, isSubtodo: boolean, parentId?: string, parentSubTodoId?: string) => void;
     updateCheckbox: (id: string, completed: boolean) => void;
+    deleteTodoHandler: (id: string, parentId?: string) => void;
 }) {
     const [isCompleted, setIsCompleted] = useState(todo.completed);
 
@@ -106,6 +108,10 @@ export function TodoComponent({
                         {todo.expectation} minutes
                     </span>
                 </div>
+                <Button variant="ghost" onClick={() => deleteTodoHandler(todo.id, todo.todoId)}>
+                    Delete
+                </Button>
+
                 <AddTodoDialog
                     addTodoHandler={addTodoHandler}
                     isSubtodo={true}
@@ -123,6 +129,7 @@ export function TodoComponent({
                             todo={subTodo}
                             addTodoHandler={addTodoHandler}
                             updateCheckbox={updateCheckbox}
+                            deleteTodoHandler={deleteTodoHandler}
                         />
                     ))}
                 </div>

@@ -248,4 +248,107 @@ export async function updateTodoHandler(req: Request) {
     }
 }
 
-export { createTodoHandler as POST, getTodosHandler as GET, updateTodoHandler as PUT };
+async function deleteTodoHandler(req: Request) {
+    try {
+        const body: {
+            id: string;
+            parentId?: string;
+        } = await req.json();
+
+        console.log(body);
+
+        if (!body.id) {
+            console.log("Missing todoId");
+            return NextResponse.json({ error: "Missing todoId" }, { status: 400 });
+        }
+
+        if (body.parentId) {
+            let subtodo = await prisma.subTodo.findFirst({
+                where: {
+                    id: String(body.id),
+                },
+                include: {
+                    subTodos: {
+                        include: {
+                            subTodos: {
+                                include: {
+                                    subTodos: {
+                                        include: {
+                                            subTodos: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+
+            if (!subtodo) {
+                return NextResponse.json({ error: "Subtodo not found" }, { status: 404 });
+            }
+
+            if (subtodo.subTodos) {
+                if (subtodo.subTodos.length > 0) {
+                    return NextResponse.json(
+                        { error: "Subtodo cannot be deleted because it has subtodos" },
+                        { status: 400 },
+                    );
+                }
+            }
+
+            await prisma.subTodo.delete({
+                where: {
+                    id: String(body.id),
+                },
+            });
+        } else {
+            let todo: any = await prisma.todo.findFirst({
+                where: {
+                    id: String(body.id),
+                },
+                include: {
+                    subTodos: {
+                        include: {
+                            subTodos: {
+                                include: {
+                                    subTodos: {
+                                        include: {
+                                            subTodos: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+
+            if (!todo) {
+                return NextResponse.json({ error: "Todo not found" }, { status: 404 });
+            }
+
+            if (todo.subTodos) {
+                if (todo.subTodos.length > 0) {
+                    return NextResponse.json(
+                        { error: "Todo cannot be deleted because it has subtodos" },
+                        { status: 400 },
+                    );
+                }
+            }
+            await prisma.todo.delete({
+                where: {
+                    id: String(body.id),
+                },
+            });
+        }
+
+        return NextResponse.json({ success: true }, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+    } finally {
+        await prisma.$disconnect();
+    }
+}
+
+export { createTodoHandler as POST, getTodosHandler as GET, updateTodoHandler as PUT, deleteTodoHandler as DELETE };

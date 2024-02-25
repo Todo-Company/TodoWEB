@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { TodoEnum } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { TodoComponent, AddTodo } from "./todo";
@@ -86,13 +86,33 @@ export function Dashboard() {
     };
 
     const updateCheckbox = (id: string, completed: boolean) => {
-        console.log("updateCheckbox", id, completed);
-
         fetch("/api/todo", {
             method: "PUT",
             body: JSON.stringify({ id, completed }),
-        }).then((res) => {
+        });
+    };
+
+    const deleteTodoHandler = (id: string, parentId?: string) => {
+        fetch("/api/todo", {
+            method: "DELETE",
+            body: JSON.stringify({ id, parentId }),
+        }).then(async (res) => {
             console.log(res);
+
+            if (res.ok) {
+                toast({
+                    variant: "default",
+                    title: "Success",
+                    description: "Todo deleted successfully",
+                });
+            } else {
+                let data = await res.json();
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: data.error,
+                });
+            }
         });
     };
 
@@ -117,6 +137,7 @@ export function Dashboard() {
                         todo={todo}
                         addTodoHandler={addTodoHandler}
                         updateCheckbox={updateCheckbox}
+                        deleteTodoHandler={deleteTodoHandler}
                     />
                 ))}
             </div>

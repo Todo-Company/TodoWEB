@@ -8,13 +8,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function RegisterPage() {
     const router = useRouter();
     const { theme } = useTheme();
+    const { toast } = useToast();
 
     useEffect(() => {
         async function getLoader() {
@@ -50,7 +51,10 @@ export default function RegisterPage() {
         });
 
         if (response.status !== 200) {
-            toast("User already exists or something went wrong.");
+            toast({
+                variant: "destructive",
+                title: "User already exists or something went wrong",
+            });
         }
 
         router.push("/login");

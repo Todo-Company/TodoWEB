@@ -55,7 +55,7 @@ model Todo {
   priority    PriorityEnum
   expectation Int
   userId      String       @db.ObjectId
-  subTodos    SubTodo[]
+  subTodos    SubTodo[]  
 }
 
 model SubTodo {
