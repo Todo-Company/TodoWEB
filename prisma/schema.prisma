@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            Int       @id @default(autoincrement()) @map("_id")
   name          String?
   email         String?   @unique
   password      String?
@@ -19,8 +19,8 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String  @db.ObjectId
+  id                Int     @id @default(autoincrement()) @map("_id")
+  userId            Int
   type              String
   provider          String
   providerAccountId String
@@ -31,53 +31,32 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
 model Session {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  id           Int      @id @default(autoincrement()) @map("_id")
   sessionToken String   @unique
-  userId       String   @db.ObjectId
+  userId       Int
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Todo {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  completed   Boolean
-  created     DateTime     @db.Date
-  goalDate    DateTime     @db.Date
-  title       String
-  type        TodoEnum
-  priority    PriorityEnum
-  expectation Int
-  userId      String       @db.ObjectId
-  subTodos    SubTodo[]  
-}
-
-model SubTodo {
-  id              String       @id @default(auto()) @map("_id") @db.ObjectId
-  completed       Boolean
-  created         DateTime     @db.Date
-  goalDate        DateTime     @db.Date
-  title           String
-  type            TodoEnum
-  priority        PriorityEnum
-  expectation     Int
-  todoId          String       @db.ObjectId
-  todo            Todo         @relation(fields: [todoId], references: [id])
-  userId          String       @db.ObjectId
-  subTodos        SubTodo[]    @relation("SubTodoToSubTodo")
-  parentSubTodoId String?      @db.ObjectId
-  parentSubTodo   SubTodo?     @relation("SubTodoToSubTodo", fields: [parentSubTodoId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-type TimeRange {
-  startTime DateTime
-  endTime   DateTime
+  id           Int          @id @default(autoincrement()) @map("_id")
+  completed    Boolean
+  created      DateTime     @db.Date
+  goalDate     DateTime     @db.Date
+  title        String
+  type         TodoEnum
+  priority     PriorityEnum
+  expectation  Int
+  userId       Int
+  parentTodoId Int?
+  parentTodo   Todo?        @relation("TodoToTodo", fields: [parentTodoId], references: [id], onDelete: Cascade)
+  subTodos     Todo[]       @relation("TodoToTodo")
 }
 
 enum TodoEnum {
@@ -91,22 +70,3 @@ enum PriorityEnum {
   MEDIUM
   HIGH
 }
-
-// type TodoSubTodos {
-//   completed Boolean
-//   created   DateTime @db.Date
-//   goalDate  DateTime @db.Date
-//   title     String
-//   type      TodoType
-// }
-
-// model Todo {
-//   id        String         @id @default(auto()) @map("_id") @db.ObjectId
-//   completed Boolean
-//   created   DateTime       @db.Date
-//   goalDate  DateTime       @db.Date
-//   subTodos  TodoSubTodos[]
-//   title     String
-//   type      TodoType
-//   userId    String         @db.ObjectId
-// }
