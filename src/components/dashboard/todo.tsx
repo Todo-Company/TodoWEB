@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import AddTodoDialog from "./AddTodoDialog";
 import { useState } from "react";
 import SlideIn from "@/components/ui/slideIn";
+import { Textarea } from "@/components/ui/textarea";
 
 export function TodoComponent({
     todo,
@@ -69,7 +70,7 @@ export function TodoComponent({
                     />
                     <h3
                         className={cn(
-                            "w-full scroll-m-20 text-justify text-base leading-6 sm:text-lg sm:leading-7",
+                            "w-full scroll-m-20 whitespace-pre-wrap text-justify text-base leading-6 sm:text-lg sm:leading-7",
                             !isCompleted && "text-foreground",
                         )}
                     >
@@ -233,7 +234,7 @@ export function AddTodo({
                             <FormItem>
                                 <FormLabel>Title</FormLabel>
                                 <FormControl className="!mt-0">
-                                    <Input placeholder="Title" {...field} />
+                                    <Textarea placeholder="Title" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
