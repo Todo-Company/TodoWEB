@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { zoomies } from "ldrs";
 
 export default function LoginPage() {
     const router = useRouter();
