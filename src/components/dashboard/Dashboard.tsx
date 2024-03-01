@@ -116,7 +116,7 @@ export function Dashboard() {
     };
 
     return (
-        <div className="mx-auto mt-12 grid w-full max-w-[100ch] [grid-column:_content]">
+        <div className="mx-auto mt-12 grid w-full max-w-[120ch] [grid-column:_content]">
             <SlideIn>
                 <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">Dashboard</h2>
                 <p className="leading-7 text-muted-foreground [&:not(:first-child)]:mt-6">

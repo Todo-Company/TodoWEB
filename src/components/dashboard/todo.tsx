@@ -46,15 +46,15 @@ export function TodoComponent({
         <SlideIn
             key={todo.id}
             className={cn(
-                "grid ",
-                todo.subTodos && "mx-4",
+                "grid",
+                todo.subTodos && "mx-2 md:mx-4 xl:mx-8",
                 isCompleted ? "border-todoFinished-foreground" : "border-border",
-                todo.type === "SECTION" && "mt-4 border-[1px] pb-4",
+                todo.type === "SECTION" && "mt-8 border-[1px] pb-2 sm:pb-4 xl:pb-8",
             )}
         >
             <div
                 className={cn(
-                    "group grid gap-4 border-b px-2 py-6 lg:px-4",
+                    "group grid gap-4 border-b px-4 py-6 lg:px-6",
                     todo.type === "SECTION" && "bg-todo",
                     isCompleted && "bg-todoFinished text-todoFinished-foreground",
                 )}
