@@ -28,7 +28,7 @@ export default function LoginPage() {
 
     const formSchema = z.object({
         email: z.string().min(1, { message: "Email has to be filled." }).email(),
-        password: z.string().min(8, { message: "Password must be atleast 8 characters long." }),
+        password: z.string().min(8, { message: "Password must be at least 8 characters long." }),
     });
 
     const { formState, ...form } = useForm<z.infer<typeof formSchema>>({
